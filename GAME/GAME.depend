@@ -1,0 +1,42 @@
+# depslib dependency file v1.0
+1742465964 source:d:\cpp\game\main.cpp
+	<iostream>
+	<SDL.h>
+	<SDL_image.h>
+
+1742510807 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\palyer.cpp
+	"player.h"
+	<SDL.h>
+	<SDL_image.h>
+	<thread>
+
+1742506701 c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\player.h
+	<iostream>
+	<SDL.h>
+	<SDL_image.h>
+
+1742510893 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\main.cpp
+	<iostream>
+	"background.h"
+	"player.h"
+	<SDL.h>
+	<SDL_image.h>
+
+1742505567 c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\background.h
+	<iostream>
+	"SDL.h"
+	"SDL_image.h"
+	<vector>
+	<fstream>
+	<map>
+
+1742510408 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\background.cpp
+	<iostream>
+	"background.h"
+	<SDL.h>
+	<SDL_image.h>
+	<string.h>
+	<vector>
+	<fstream>
+	<sstream>
+

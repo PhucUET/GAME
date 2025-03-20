@@ -32,9 +32,11 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="background.cpp" />
+		<Unit filename="background.h" />
 		<Unit filename="main.cpp" />
-		<Extensions>
-			<lib_finder disable_auto="1" />
-		</Extensions>
+		<Unit filename="palyer.cpp" />
+		<Unit filename="player.h" />
+		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
