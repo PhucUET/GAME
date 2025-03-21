@@ -2,7 +2,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <thread>
-
+#include "weapon.h"
 #define idle_namefile "Sword_Idle_full.png"
 #define run_namefile "Sword_Walk_full.png"
 const int frame_height = 64;
@@ -41,7 +41,7 @@ void Player::render_Player(SDL_Renderer* render) {
     framecountIdle = idleWidth / frame_width;
     framecountRun  = runWidth / frame_width;
 }
-void Player::update() {
+void Player::update(Background& bg,SDL_Renderer* render) {
      moving = false; // Mặc định là không di chuyển
     double newX = dstRect.x;
     double newY = dstRect.y;
@@ -62,9 +62,9 @@ void Player::update() {
         currentAnimation = 1;
         moving = true;
     }
-//        if (keyStates[SDL_SCANCODE_SPACE]) {
-//           skill(dstRect.x + 16,dstRect.y + 16,bg); //Sửa lại skill
-//    }
+        if (keyStates[SDL_SCANCODE_SPACE]) {
+            if(!weapons.check_bom()) skill(bg,render); //Sửa lại skill
+    }
 
     if (moving) {
         if (!isrunning) {
@@ -82,8 +82,10 @@ void Player::update() {
         curFrameCount = framecountIdle;
         isrunning = false;
     }
-    dstRect.x = newX;
-    dstRect.y = newY;
+    if(bg.canwalk(newX,newY)) {
+        dstRect.x = newX;
+        dstRect.y = newY;
+    }
 }
 
 void Player::handleInput() {
@@ -108,7 +110,38 @@ void Player::render_update(SDL_Renderer* render) {
 //        SDL_RenderPresent(renderer_player);
 }
 
-void Player::Up_All(SDL_Renderer* render) {
-    update();
+void Player::Up_All(SDL_Renderer* render, Background& bg,float deltaTime) {
+    if(weapons.check_bom()) {
+        weapons.update(deltaTime,render);
+        if(!weapons.check_bom()) {
+            pair<int,int> pos = weapons.pos_bom();
+            int u = pos.first;
+            int v = pos.second;
+            for(int i = 0 ; i < 4 ; i ++) {
+                bg.del_pos(u + dx[i],v + dy[i]);
+            }
+            for(int i = 0 ; i < 4 ; i ++) {
+                for(int k = 1 ; k <= 1 + weapons.Power_Bom() ; k ++) {
+                    bg.del_pos(u + k * dx[i],v + k * dy[i]);
+                }
+            }
+            bg.del_pos(u,v);
+        }
+    }
+    update(bg,render);
     render_update(render);
+}
+
+void Player::skill(Background& bg,SDL_Renderer* render) {
+    int sx = dstRect.x + 16;
+    int sy = dstRect.y + 16;
+    if(weapons.Bom()) {
+        bg.block_tile(sx,sy);
+        for(int i = 0 ; i < 4 ; i ++) {
+            for(int k = 1 ; k <= 1 + weapons.Power_Bom() ; k ++) {
+                bg.block_tile(sx + k * dx[i],sy + k * dy[i]);
+            }
+        }
+        weapons.render_Bom(render,sx,sy);
+    }
 }

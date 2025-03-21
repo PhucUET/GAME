@@ -6,6 +6,10 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include <queue>
+
+#define ii pair<int,int>
+#define pii pair<int,ii>
 using namespace std;
 
 Background::Background(int type,int sz,int width,int height) {
@@ -13,7 +17,7 @@ Background::Background(int type,int sz,int width,int height) {
     window_height = height;
     size_texture = sz;
     now_type = type;
-    stx = (window_width - window_height)/size_texture;
+    stx = 3;
     sty = 0;
     endx = window_width/size_texture;
     endy = window_height/size_texture;
@@ -60,9 +64,12 @@ void Background::loadMap(const char* path) {
         string cell;
         while(getline(ss,cell,',') && col < endx) {
             int num = 0;
-            for(int i = 0 ; i <  cell.size() ; i ++) num = num * 10 + cell[i] - '0';
-            if(num > 0) sizemap[row][col].push_back(num);
-            if(num % 300 == 0) matrix[row][col] = 1;
+            for(int i = 0 ; i <  cell.size() ; i ++) {
+                if(cell[i] > '9' || cell[i] < '0') continue;
+                num = num * 10 + cell[i] - '0';
+            }
+            if(num > 0) sizemap[col][row].push_back(num);
+            if(num >= 100) matrix[col][row] = 1;
             ++ col;
         }
         ++row;
@@ -113,4 +120,99 @@ void Background::BackgroundD(SDL_Renderer* render) {
             }
         }
     }
+}
+
+bool Background::canwalk(int sx,int sy) {
+    int u = (sx + 16) / size_texture;
+    int v = (sy + 16) / size_texture;
+    if(u < stx || u >= endx || v < sty || v >= endy || matrix[u][v] == 1) return false;
+//    for(int type : sizemap[u][v]) {
+//        if(type % 100 == 0) return false;
+//    }
+    return true;
+}
+
+bool Background::canwalk_Enemy(int sx,int sy) {
+    int u = (sx + 16) / size_texture;
+    int v = (sy + 16) / size_texture;
+    if(matrix[u][v] == 2) cout <<"chungtakhongthedi " <<u <<" "<<v <<"\n";
+    if(u < stx || u >= endx || v < sty || v >= endy || matrix[u][v] == 1 || matrix[u][v] == 2) return false;
+
+//    for(int type : sizemap[u][v]) {
+//        if(type % 100 == 0) return false;
+//    }
+    return true;
+}
+
+void Background::del_pos(int sx,int sy) {
+    int u = sx/size_texture;
+    int v = sy/size_texture;
+    if(sizemap[u][v].back() == 100) sizemap[u][v].pop_back(),matrix[u][v] = 0;
+    else if(matrix[u][v] == 2) matrix[u][v] = 0;
+}
+
+void Background::block_tile(int sx,int sy) {
+    int u = sx/size_texture;
+    int v = sy/size_texture;
+    if(matrix[u][v] == 0) matrix[u][v] = 2;
+}
+
+pair<int,int> Background::dijsktra(int sx,int sy) {
+    vector<vector<int>> d(100,vector<int>(100,100000));
+    vector<vector<pair<int,int>>> par(100,vector<pair<int,int>>(100,{-1,-1}));
+    priority_queue<pii,vector<pii>,greater<pii>> pq;
+    int xx = (sx + 16) / size_texture;
+    int yy = (sy + 16) / size_texture;
+    d[xx][yy] = 0;
+    pq.push({0,{xx,yy}});
+    pii mina = {100000,{-1,-1}};
+    while(!pq.empty()) {
+        int val = pq.top().first;
+        int x = pq.top().second.first;
+        int y = pq.top().second.second;
+        cout << x <<" "<<y <<"\n";
+        pq.pop();
+        if(matrix[x][y] == 0) {
+            if(mina.first > val) {
+                mina.second = make_pair(x,y);
+                mina.first = val;
+                break;
+            }
+        }
+        for(int i = 0 ; i < 4 ; i ++) {
+            int u = x + dx[i];
+            int v = y + dy[i];
+            if(!canwalk(u * 32 - 16,v * 32 - 16)) continue;
+            if(d[u][v] > val + 1) {
+                d[u][v] = val + 1;
+                par[u][v] = make_pair(x,y);
+                pq.push({d[u][v],{u,v}});
+            }
+        }
+    }
+    cout << "truyvettttt" << mina.second.first <<" "<<mina.second.second <<"\n";
+    while(par[mina.second.first][mina.second.second] != make_pair((sx + 16)/32,(sy + 16)/32)) {
+            mina.second = par[mina.second.first][mina.second.second];
+            cout << "truyvettttt" << mina.second.first <<" "<<mina.second.second <<"\n";
+    }
+    return mina.second;
+}
+
+bool Background::check_dangerous(int sx,int sy) {
+    sx = (sx + 16) / size_texture;
+    sy = (sy + 16) / size_texture;
+    if(matrix[sx][sy] == 2) return true;
+    return false;
+}
+bool Background::check_tile(int sx,int sy) {
+    sx = (sx + 16)/size_texture;
+    sy = (sy + 16)/size_texture;
+    for(int i = 0 ; i < 4 ; i ++) {
+        int u = sx + dx[i];
+        int v = sy + dy[i];
+        for(int type : sizemap[u][v]) {
+            if(type == 100) return true;
+        }
+    }
+    return false;
 }

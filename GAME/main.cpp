@@ -1,10 +1,11 @@
 #include <iostream>
 #include "background.h"
 #include "player.h"
+#include "enemy.h"
 #include <SDL.h>
 #include <SDL_image.h>
 using namespace std;
-const int window_width = 576;
+const int window_width = 640;
 const int window_height = 480;
 const int size_texture = 32;
 SDL_Window* window = nullptr;
@@ -32,12 +33,21 @@ void quitSDL() {
     SDL_DestroyWindow(window);
     SDL_Quit();
 }
-Player P1(3 * 32 - 16,-16);
+Player P1(4 * 32 - 16,16);
 
+Enemy E1(640 - 16 - 64, 16);
+
+
+Uint32 lastTime = SDL_GetTicks();
+Uint32 currentTime;
+float deltaTime = 0.0f;
 void Gameloop() {
     int run = true;
     SDL_Event e;
     while(run) {
+        currentTime = SDL_GetTicks();
+        deltaTime = (currentTime - lastTime) / 1000.0f;
+        lastTime = currentTime;
         cerr << "hehe\n";
         P1.handleInput();
         while (SDL_PollEvent(&e)) {
@@ -45,10 +55,11 @@ void Gameloop() {
                 run = false;
             }
         }
-//        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-//        SDL_RenderClear(renderer);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
         background.BackgroundD(renderer);
-        P1.Up_All(renderer);
+        P1.Up_All(renderer,background,deltaTime);
+        E1.Up_All(renderer,background,deltaTime);
         SDL_RenderPresent(renderer);
         SDL_Delay(100);
     }
@@ -57,8 +68,11 @@ void Gameloop() {
 int main(int argc, char* argv[])
 {
     Init();
-    P1.render_Player(renderer);
     background.typemap(0);
+    background.loadMap("1.csv");
+    P1.render_Player(renderer);
+    E1.render_Player(renderer);
+    SDL_RenderPresent(renderer);
     Gameloop();
 
     quitSDL();
