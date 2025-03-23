@@ -125,6 +125,7 @@ void Background::BackgroundD(SDL_Renderer* render) {
 bool Background::canwalk(int sx,int sy) {
     int u = (sx + 16) / size_texture;
     int v = (sy + 16) / size_texture;
+    if(u < 0 || v < 0) return false;
     if(u < stx || u >= endx || v < sty || v >= endy || matrix[u][v] == 1) return false;
 //    for(int type : sizemap[u][v]) {
 //        if(type % 100 == 0) return false;
@@ -135,6 +136,7 @@ bool Background::canwalk(int sx,int sy) {
 bool Background::canwalk_Enemy(int sx,int sy) {
     int u = (sx + 16) / size_texture;
     int v = (sy + 16) / size_texture;
+    if(u < 0 || v < 0) return false;
     if(matrix[u][v] == 2) cout <<"chungtakhongthedi " <<u <<" "<<v <<"\n";
     if(u < stx || u >= endx || v < sty || v >= endy || matrix[u][v] == 1 || matrix[u][v] == 2) return false;
 
@@ -147,6 +149,7 @@ bool Background::canwalk_Enemy(int sx,int sy) {
 void Background::del_pos(int sx,int sy) {
     int u = sx/size_texture;
     int v = sy/size_texture;
+    if(u < 0 || v < 0) return;
     if(sizemap[u][v].back() == 100) sizemap[u][v].pop_back(),matrix[u][v] = 0;
     else if(matrix[u][v] == 2) matrix[u][v] = 0;
 }
@@ -154,6 +157,7 @@ void Background::del_pos(int sx,int sy) {
 void Background::block_tile(int sx,int sy) {
     int u = sx/size_texture;
     int v = sy/size_texture;
+    if(u < 0 || v < 0) return;
     if(matrix[u][v] == 0) matrix[u][v] = 2;
 }
 
@@ -201,12 +205,14 @@ pair<int,int> Background::dijsktra(int sx,int sy) {
 bool Background::check_dangerous(int sx,int sy) {
     sx = (sx + 16) / size_texture;
     sy = (sy + 16) / size_texture;
+    if(sx < 0 || sy < 0) return false;
     if(matrix[sx][sy] == 2) return true;
     return false;
 }
 bool Background::check_tile(int sx,int sy) {
     sx = (sx + 16)/size_texture;
     sy = (sy + 16)/size_texture;
+    if(sx < 0 || sy < 0) return false;
     for(int i = 0 ; i < 4 ; i ++) {
         int u = sx + dx[i];
         int v = sy + dy[i];
@@ -219,6 +225,7 @@ bool Background::check_tile(int sx,int sy) {
 void Background::up_death(int sx,int sy) {
     int u = sx/size_texture;
     int v = sy/size_texture;
+    if(u < 0 || v < 0) return;
     cout << "chetmemayroi     " << u <<" "<<v <<"\n";
     death[u][v] = 1;
 }
@@ -226,12 +233,7 @@ void Background::up_death(int sx,int sy) {
 bool Background::is_death(int sx,int sy) {
     int u = (sx + 16)/size_texture;
     int v = (sy + 16)/size_texture;
-    for(int i = stx ; i < endx ; i ++) {
-        for(int j = sty ; j < endy ; j ++) {
-            cout << death[i][j] <<" ";
-        }
-        cout << endl;
-    }
+    if(u < 0 || v < 0) return false;
     return death[u][v];
 }
 void Background::reset_death() {
@@ -240,4 +242,22 @@ void Background::reset_death() {
             death[i][j] = 0;
         }
     }
+}
+
+void Background::update_character(int sx,int sy,bool c) {
+    int u = (sx + 16)/size_texture;
+    int v = (sy + 16)/size_texture;
+    character[u][v] = c;
+}
+
+bool Background::check_character(int sx,int sy) {
+    int u = sx/size_texture;
+    int v = sy/size_texture;
+    return character[u][v];
+}
+bool Background::check_destroy(int sx,int sy) {
+    int u = sx/size_texture;
+    int v = sy/size_texture;
+    if(sizemap[u][v].back() == 100) return true;
+    return false;
 }

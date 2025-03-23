@@ -5,6 +5,7 @@
 #include <SDL_image.h>
 #include <string>
 #include <utility>
+#include "background.h"
 
 using namespace std;
 class Weapon{
@@ -15,7 +16,7 @@ private:
     SDL_Rect dst;
     enum WeaponType {BOM = 1, GUN = 2, EXTRA_BOOM = 3};
     WeaponType Weatype = BOM;
-    int times = 2;
+    int times = 99999;
     int power = 1;
     bool isExploding = false;
     float timeToExplode = 5000.0f;
@@ -23,9 +24,11 @@ private:
     float maxExplosionTime = 0.5f;
     Uint32 lastTime = SDL_GetTicks();
     SDL_Texture* texture_Bom = nullptr;
-
+    int dx[4] = {0,-32,32,0};
+    int dy[4] = {32,0,0,-32};
 
 public:
+    void check_type();
     bool check_bom();
     int frame_width = 32;
     int frame_count = 0;
@@ -42,6 +45,17 @@ public:
     SDL_Texture* loadTexture(const char* path, int& spriteSheetWidth, int& spriteSheetHeight,SDL_Renderer* render);
     void update(float deltaTime,SDL_Renderer* render);
     bool Bom();
+    void change_Gun() {
+        times = 2;
+        Weatype = GUN;
+    }
+    void change_Bom() {
+        Weatype = BOM;
+    }
+    bool Gun() {
+        if(GetWeapon() == GUN) return true;
+        return false;
+    }
     WeaponType GetWeapon() const{ return Weatype;}
     int Power_Bom() {
         return power;
@@ -49,6 +63,7 @@ public:
     void update_power() {
         power ++;
     }
+    void render_shoot(SDL_Renderer* render,Background& bg,int direct,int sx,int sy);
 
 };
 

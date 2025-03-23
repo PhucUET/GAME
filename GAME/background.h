@@ -13,6 +13,7 @@ using namespace std;
 class Background{
 private:
     int matrix[200][200];
+    bool character[200][200];
     bool death[200][200];
     vector<int> sizemap[200][200];
     map<int,SDL_Texture*> tileTexture;
@@ -45,9 +46,22 @@ public:
     void block_tile(int sx,int sy);
     pair<int,int> dijsktra(int sx,int sy);
     bool check_dangerous(int sx,int sy);
+    bool wall_check(int sx,int sy) {
+        int u = sx / size_texture;
+        int v = sy / size_texture;
+        if(!sizemap[u][v].size()) return true;
+        for(int type : sizemap[u][v]) {
+            if(type % 200 == 0) return true;
+        }
+        return false;
+    }
     bool check_tile(int sx,int sy);
     void up_death(int sx,int sy);
     bool is_death(int sx,int sy);
     void reset_death();
+
+    void update_character(int sx,int sy,bool c);
+    bool check_character(int sx,int sy);
+    bool check_destroy(int sx,int sy);
 };
 #endif // BACKGROUND

@@ -18,8 +18,8 @@ private:
     SDL_Renderer* renderer_player = nullptr;
 
     int speed = 32;
-    int health  = 1;
-
+    int health  = 2;
+    int point = 0;
 
     Weapon weapons;
     const Uint8* keyStates = nullptr;
@@ -31,6 +31,9 @@ private:
     int dy[4] = {32,0,0,-32};
 
 public:
+    int Get_point() {
+        return point;
+    }
     Player(int sx,int sy);
     pair<int,int> location() {
         return make_pair(dstRect.x,dstRect.y);

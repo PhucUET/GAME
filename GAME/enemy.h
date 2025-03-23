@@ -18,6 +18,9 @@ private:
 
     int speed = 32;
     int health = 1;
+    int point = 0;
+    int times = 0;
+
 
     Weapon weapons;
     const Uint8* keyStates = nullptr;

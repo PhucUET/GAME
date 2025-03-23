@@ -60,4 +60,16 @@ bool Weapon::check_bom() {
 }
 bool Weapon::Bom() {
     if(GetWeapon() == BOM) return true;
+    return false;
 }
+void Weapon::check_type() {
+    cout << times <<"\n";
+    if(times == 0) {
+        change_Bom();
+        times = 999999;
+    }
+    times = times - 1;
+}
+//void Weapon::render_shoot(SDL_Renderer* render, Background& bg, int direct, int sx, int sy) {
+//
+//}
