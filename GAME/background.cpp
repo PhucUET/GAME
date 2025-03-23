@@ -216,3 +216,28 @@ bool Background::check_tile(int sx,int sy) {
     }
     return false;
 }
+void Background::up_death(int sx,int sy) {
+    int u = sx/size_texture;
+    int v = sy/size_texture;
+    cout << "chetmemayroi     " << u <<" "<<v <<"\n";
+    death[u][v] = 1;
+}
+
+bool Background::is_death(int sx,int sy) {
+    int u = (sx + 16)/size_texture;
+    int v = (sy + 16)/size_texture;
+    for(int i = stx ; i < endx ; i ++) {
+        for(int j = sty ; j < endy ; j ++) {
+            cout << death[i][j] <<" ";
+        }
+        cout << endl;
+    }
+    return death[u][v];
+}
+void Background::reset_death() {
+    for(int i = stx ; i < endx ; i ++) {
+        for(int j = sty ; j < endy ; j ++) {
+            death[i][j] = 0;
+        }
+    }
+}

@@ -4,14 +4,14 @@
 	<SDL.h>
 	<SDL_image.h>
 
-1742595551 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\palyer.cpp
+1742728517 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\palyer.cpp
 	"player.h"
 	<SDL.h>
 	<SDL_image.h>
 	<thread>
 	"weapon.h"
 
-1742591066 c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\player.h
+1742728689 c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\player.h
 	"weapon.h"
 	<iostream>
 	<SDL.h>
@@ -19,7 +19,7 @@
 	"background.h"
 	<utility>
 
-1742589585 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\main.cpp
+1742726834 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\main.cpp
 	<iostream>
 	"background.h"
 	"player.h"
@@ -27,7 +27,7 @@
 	<SDL.h>
 	<SDL_image.h>
 
-1742595497 c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\background.h
+1742726401 c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\background.h
 	<iostream>
 	"SDL.h"
 	"SDL_image.h"
@@ -36,7 +36,7 @@
 	<map>
 	<utility>
 
-1742595661 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\background.cpp
+1742728222 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\background.cpp
 	<iostream>
 	"background.h"
 	<SDL.h>
@@ -47,17 +47,17 @@
 	<sstream>
 	<queue>
 
-1742585922 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\weapon.cpp
+1742726401 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\weapon.cpp
 	<iostream>
 	"weapon.h"
 
-1742585939 c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\weapon.h
+1742728603 c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\weapon.h
 	<SDL.h>
 	<SDL_image.h>
 	<string>
 	<utility>
 
-1742595868 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\enemy.cpp
+1742728517 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\enemy.cpp
 	"enemy.h"
 	<SDL.h>
 	<SDL_image.h>
@@ -66,7 +66,7 @@
 	<chrono>
 	"weapon.h"
 
-1742591066 c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\enemy.h
+1742726776 c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\enemy.h
 	"weapon.h"
 	<iostream>
 	<SDL.h>

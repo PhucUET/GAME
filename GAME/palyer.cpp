@@ -117,15 +117,19 @@ void Player::Up_All(SDL_Renderer* render, Background& bg,float deltaTime) {
             pair<int,int> pos = weapons.pos_bom();
             int u = pos.first;
             int v = pos.second;
+            bg.del_pos(u,v);
+            bg.up_death(u,v);
             for(int i = 0 ; i < 4 ; i ++) {
-                bg.del_pos(u + dx[i],v + dy[i]);
-            }
-            for(int i = 0 ; i < 4 ; i ++) {
-                for(int k = 1 ; k <= 1 + weapons.Power_Bom() ; k ++) {
-                    bg.del_pos(u + k * dx[i],v + k * dy[i]);
+                for(int k = 1 ; k <= weapons.Power_Bom() ; k ++) {
+                    bg.del_pos(u + dx[i] * k,v + dy[i] * k);
+                    bg.up_death(u + dx[i] * k,v + dy[i] * k);
                 }
             }
-            bg.del_pos(u,v);
+//            for(int i = 0 ; i < 4 ; i ++) {
+//                for(int k = 1 ; k <= weapons.Power_Bom() ; k ++) {
+//                    bg.block_tile(u + k * dx[i],v + k * dy[i],0);
+//                }
+//            }
         }
     }
     update(bg,render);

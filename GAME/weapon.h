@@ -46,6 +46,9 @@ public:
     int Power_Bom() {
         return power;
     }
+    void update_power() {
+        power ++;
+    }
 
 };
 

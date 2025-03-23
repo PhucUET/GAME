@@ -18,6 +18,9 @@ private:
     SDL_Renderer* renderer_player = nullptr;
 
     int speed = 32;
+    int health  = 1;
+
+
     Weapon weapons;
     const Uint8* keyStates = nullptr;
     bool moving = false;
@@ -29,6 +32,9 @@ private:
 
 public:
     Player(int sx,int sy);
+    pair<int,int> location() {
+        return make_pair(dstRect.x,dstRect.y);
+    }
     int idleWidth = 0, idleHeight = 0;
     int runWidth = 0, runHeight = 0;
     int frame_count = 0;
@@ -47,7 +53,15 @@ public:
     void update(Background& bg,SDL_Renderer* render);
     void skill(Background& bg,SDL_Renderer* render);
 //    void update(Background& bg);
-
+    bool alive() {
+        return health;
+    }
+    void down_alive() {
+        health --;
+    }
+    void update_power() {
+        weapons.update_power();
+    }
 };
 
 #endif // PLAYER

@@ -41,10 +41,16 @@ Enemy E1(640 - 16 - 64, 16);
 Uint32 lastTime = SDL_GetTicks();
 Uint32 currentTime;
 float deltaTime = 0.0f;
+void up_P1() {
+    P1.Up_All(renderer,background,deltaTime);
+}
+void up_E1() {
+    E1.Up_All(renderer,background,deltaTime);
+}
 void Gameloop() {
     int run = true;
     SDL_Event e;
-    while(run) {
+    while(P1.alive()) {
         currentTime = SDL_GetTicks();
         deltaTime = (currentTime - lastTime) / 1000.0f;
         lastTime = currentTime;
@@ -58,11 +64,25 @@ void Gameloop() {
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
         background.BackgroundD(renderer);
-        P1.Up_All(renderer,background,deltaTime);
-        E1.Up_All(renderer,background,deltaTime);
+        up_P1();
+        if(E1.alive()) {
+            up_E1();
+        }
+        pair<int,int> pos_P1 = P1.location();
+        pair<int,int> pos_E1 = E1.location();
+        if(background.is_death(pos_P1.first,pos_P1.second)) {
+            cout <<"thang nhan vat chet toi \n";
+           P1.down_alive();
+        }
+        if(background.is_death(pos_E1.first,pos_E1.second)) {
+            E1.down_alive();
+        }
         SDL_RenderPresent(renderer);
         SDL_Delay(100);
+        background.reset_death();
+
     }
+    cout <<"thua cuoc \n";
 }
 
 int main(int argc, char* argv[])
@@ -73,8 +93,8 @@ int main(int argc, char* argv[])
     P1.render_Player(renderer);
     E1.render_Player(renderer);
     SDL_RenderPresent(renderer);
+    P1.update_power();
     Gameloop();
-
     quitSDL();
     return 0;
 }

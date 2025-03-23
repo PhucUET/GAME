@@ -17,6 +17,8 @@ private:
     SDL_Texture* currentTexture = nullptr;
 
     int speed = 32;
+    int health = 1;
+
     Weapon weapons;
     const Uint8* keyStates = nullptr;
     bool moving = false;
@@ -24,11 +26,14 @@ private:
     Uint32 lastTime = SDL_GetTicks();
     Uint32 RunTime = SDL_GetTicks();
 
-    int dx[4] = {0,-32,32,0};
-    int dy[4] = {32,0,0,-32};
+    int dx[6] = {0,-32,32,0,0,0};
+    int dy[6] = {32,0,0,-32,0,0};
 
 public:
     Enemy(int sx,int sy);
+    pair<int,int> location() {
+        return make_pair(dstRect.x,dstRect.y);
+    }
     int idleWidth = 0, idleHeight = 0;
     int runWidth = 0, runHeight = 0;
     int frame_count = 0;
@@ -45,6 +50,12 @@ public:
     void Up_All(SDL_Renderer* render,Background& bg,float deltaTime);
     void skill(Background& bg,SDL_Renderer* render);
     void nextMove(SDL_Renderer* render,Background& bg);
+    bool alive() {
+        return health;
+    }
+    void down_alive() {
+        health --;
+    }
 //    void update(Background& bg);
 
 };

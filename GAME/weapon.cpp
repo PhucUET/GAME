@@ -34,10 +34,10 @@ void Weapon::update(float deltaTime,SDL_Renderer* render) {
         timeToExplode -= deltaTime * 1000;
         if(timeToExplode <= 0) {
              have_bom = false;
-        explosionTime += deltaTime;
-        isExploding = false;
-        frame_count = 0;
-        timeToExplode = 2000.0f;
+            explosionTime += deltaTime;
+            isExploding = false;
+            frame_count = 0;
+            timeToExplode = 2000.0f;
         }
     }
 }

@@ -77,7 +77,7 @@ void Enemy::skill(Background& bg,SDL_Renderer* render) {
 }
 const int RUN_DELAY = 300;
 mt19937_64 rd(chrono::steady_clock::now().time_since_epoch().count());
-int random_direction(int l = 0, int r = 4) { return uniform_int_distribution<int>(l, r)(rd);}
+int random_direction(int l = 0, int r = 3) { return uniform_int_distribution<int>(l, r)(rd);}
 int random_yn(int l = 0, int r = 1) {return uniform_int_distribution<int>(l,r)(rd);}
 void Enemy::nextMove(SDL_Renderer* render,Background& bg) {
     Uint32 Now = SDL_GetTicks();
@@ -95,12 +95,10 @@ void Enemy::nextMove(SDL_Renderer* render,Background& bg) {
             }
         }
     } else {
-        if(bg.canwalk_Enemy(dstRect.x + dx[currentAnimation],dstRect.y + dy[currentAnimation])) {
-            dstRect.x = dstRect.x + dx[currentAnimation];
-            dstRect.y = dstRect.y + dy[currentAnimation];
-            return;
-        }
         int id = random_direction();
+        while(4 - id == currentAnimation && bg.canwalk_Enemy(dstRect.x + dx[currentAnimation],dstRect.y + dy[currentAnimation])) {
+            id =random_direction();
+        }
         if(bg.canwalk_Enemy(dstRect.x + dx[id],dstRect.y + dy[id])) {
             currentAnimation = id;
             dstRect.x = dstRect.x + dx[id];
@@ -116,8 +114,12 @@ void Enemy::Up_All(SDL_Renderer* render, Background& bg,float deltaTime) {
             int u = pos.first;
             int v = pos.second;
             bg.del_pos(u,v);
+            bg.up_death(u,v);
             for(int i = 0 ; i < 4 ; i ++) {
-                bg.del_pos(u + dx[i],v + dy[i]);
+                for(int k = 1 ; k <= weapons.Power_Bom() ; k ++) {
+                    bg.del_pos(u + dx[i] * k,v + dy[i] * k);
+                    bg.up_death(u + dx[i] * k,v + dy[i] * k);
+                }
             }
 //            for(int i = 0 ; i < 4 ; i ++) {
 //                for(int k = 1 ; k <= weapons.Power_Bom() ; k ++) {
@@ -127,7 +129,7 @@ void Enemy::Up_All(SDL_Renderer* render, Background& bg,float deltaTime) {
         }
     }
     if(bg.check_tile(dstRect.x,dstRect.y)) {
-        bool c = random_direction();
+        int c = random_direction();
         if(c == 2) {
            if(!weapons.check_bom()) skill(bg,render);
         }
