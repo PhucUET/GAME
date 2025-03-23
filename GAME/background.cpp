@@ -7,6 +7,9 @@
 #include <fstream>
 #include <sstream>
 #include <queue>
+#include <thread>
+#include <chrono>
+#include <random>
 
 #define ii pair<int,int>
 #define pii pair<int,ii>
@@ -146,11 +149,21 @@ bool Background::canwalk_Enemy(int sx,int sy) {
     return true;
 }
 
+mt19937_64 rds(chrono::steady_clock::now().time_since_epoch().count());
+int random_item(int l = 0, int r = 10) { return uniform_int_distribution<int>(l, r)(rds);}
+
 void Background::del_pos(int sx,int sy) {
     int u = sx/size_texture;
     int v = sy/size_texture;
     if(u < 0 || v < 0) return;
-    if(sizemap[u][v].back() == 100) sizemap[u][v].pop_back(),matrix[u][v] = 0;
+    if(sizemap[u][v].back() == 100) {
+        sizemap[u][v].pop_back(),matrix[u][v] = 0;
+        int id = random_item();
+        if(id >= 3) id = 0;
+        if(id) {
+            sizemap[u][v].push_back(id * 1000000);
+        }
+    }
     else if(matrix[u][v] == 2) matrix[u][v] = 0;
 }
 
@@ -260,4 +273,15 @@ bool Background::check_destroy(int sx,int sy) {
     int v = sy/size_texture;
     if(sizemap[u][v].back() == 100) return true;
     return false;
+}
+
+int Background::check_item(int sx,int sy) {
+    int u = (sx + 16)/size_texture;
+    int v = (sy + 16)/size_texture;
+    if(sizemap[u][v].back() % 1000000 == 0) {
+        int type = sizemap[u][v].back();
+        sizemap[u][v].pop_back();
+        return type;
+    }
+    return 0;
 }

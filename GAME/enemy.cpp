@@ -67,6 +67,7 @@ void Enemy::render_update(SDL_Renderer* render) {
 void Enemy::skill(Background& bg,SDL_Renderer* render) {
     int sx = dstRect.x + 16;
     int sy = dstRect.y + 16;
+    weapons.check_type();
     if(weapons.Bom()) {
         bg.block_tile(sx,sy);
         for(int i = 0 ; i < 4 ; i ++) {
@@ -158,6 +159,8 @@ void Enemy::Up_All(SDL_Renderer* render, Background& bg,float deltaTime) {
 //            }
         }
     }
+
+
     if(bg.check_tile(dstRect.x,dstRect.y)) {
         int c = random_direction();
         if(c == 2) {

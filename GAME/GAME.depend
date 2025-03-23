@@ -11,7 +11,7 @@
 	<thread>
 	"weapon.h"
 
-1742741936 c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\player.h
+1742746694 c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\player.h
 	"weapon.h"
 	<iostream>
 	<SDL.h>
@@ -19,7 +19,7 @@
 	"background.h"
 	<utility>
 
-1742740749 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\main.cpp
+1742748246 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\main.cpp
 	<iostream>
 	"background.h"
 	"player.h"
@@ -27,7 +27,7 @@
 	<SDL.h>
 	<SDL_image.h>
 
-1742736784 c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\background.h
+1742746425 c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\background.h
 	<iostream>
 	"SDL.h"
 	"SDL_image.h"
@@ -36,7 +36,7 @@
 	<map>
 	<utility>
 
-1742736784 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\background.cpp
+1742747404 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\background.cpp
 	<iostream>
 	"background.h"
 	<SDL.h>
@@ -46,6 +46,9 @@
 	<fstream>
 	<sstream>
 	<queue>
+	<thread>
+	<chrono>
+	<random>
 
 1742741564 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\weapon.cpp
 	<iostream>
@@ -58,7 +61,7 @@
 	<utility>
 	"background.h"
 
-1742741503 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\enemy.cpp
+1742748246 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\enemy.cpp
 	"enemy.h"
 	<SDL.h>
 	<SDL_image.h>
@@ -67,11 +70,13 @@
 	<chrono>
 	"weapon.h"
 
-1742741503 c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\enemy.h
+1742748246 c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\enemy.h
 	"weapon.h"
 	<iostream>
 	<SDL.h>
 	<SDL_image.h>
 	"background.h"
 	<utility>
+
+1742744874 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\item.cpp
 

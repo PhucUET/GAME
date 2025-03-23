@@ -53,6 +53,15 @@ void update_pos() {
         background.update_character(pos_E1.first,pos_E1.second,0);
         E1.nextMove(renderer,background);
         pos_E1 = E1.location();
+        if(background.check_item(pos_E1.first,pos_E1.second)) {
+            int type = background.check_item(pos_E1.first,pos_E1.second);
+            if(type == 1000000) {
+                E1.change_Bom();
+            }
+            if(type == 2000000) {
+                E1.up_alive();
+            }
+        }
         background.update_character(pos_E1.first,pos_E1.second,1);
     } else {
          pair<int,int> pos_E1 = E1.location();
@@ -63,6 +72,13 @@ void update_pos() {
         background.update_character(pos_P1.first,pos_P1.second,0);
         P1.update(background,renderer);
         pos_P1 = P1.location();
+        if(int type = background.check_item(pos_P1.first,pos_P1.second)) {
+            if(type == 1000000) {
+                P1.change_gun();
+            } else {
+                P1.up_alive();
+            }
+        }
         background.update_character(pos_P1.first,pos_P1.second,1);
     }
 //    if(E2.alive()) {
@@ -111,7 +127,7 @@ void Gameloop() {
         }
         cout <<"so diem cua ban la" <<" "<<P1.Get_point() <<"\n";
         SDL_RenderPresent(renderer);
-        SDL_Delay(100);
+        SDL_Delay(200);
         background.reset_death();
 
     }

@@ -59,6 +59,12 @@ public:
     void down_alive() {
         health --;
     }
+    void up_alive() {
+        health ++;
+    }
+    void change_Bom() {
+        weapons.change_Bom();
+    }
 //    void update(Background& bg);
 
 };

@@ -63,5 +63,7 @@ public:
     void update_character(int sx,int sy,bool c);
     bool check_character(int sx,int sy);
     bool check_destroy(int sx,int sy);
+    int check_item(int sx,int sy);
+
 };
 #endif // BACKGROUND

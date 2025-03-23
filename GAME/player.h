@@ -62,8 +62,14 @@ public:
     void down_alive() {
         health --;
     }
+    void up_alive() {
+        health ++;
+    }
     void update_power() {
         weapons.update_power();
+    }
+    void change_gun(){
+        weapons.change_Gun();
     }
 };
 
