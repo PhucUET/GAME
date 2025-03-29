@@ -27,7 +27,6 @@ void Weapon::update(float deltaTime,SDL_Renderer* render) {
             }
             lastTime = currentTime;
         }
-        cout <<"frame_count" << frame_count <<"\n";
         src.x = frame_count * frame_width;
         src.y = 0;
         SDL_RenderCopy(render,texture_Bom,&src,&dst);
@@ -52,9 +51,9 @@ void Weapon::render_Bom(SDL_Renderer* render,int sx,int sy) {
     string wea = to_string(type) + ".png";
     SDL_Texture* texture = loadTexture(wea.c_str(),Bom_Width,Bom_Height,render);
     framecountBom = Bom_Width/frame_width;
+//    cout << sx <<" "<<sy <<"\n";
     texture_Bom = texture;
 }
-
 bool Weapon::check_bom() {
     return have_bom;
 }
@@ -63,7 +62,6 @@ bool Weapon::Bom() {
     return false;
 }
 void Weapon::check_type() {
-    cout << times <<"\n";
     if(times == 0) {
         change_Bom();
         times = 999999;

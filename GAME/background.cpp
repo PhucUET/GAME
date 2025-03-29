@@ -15,6 +15,52 @@
 #define pii pair<int,ii>
 using namespace std;
 
+void Background::print_UI(SDL_Renderer* render) {
+    SDL_Rect dst;
+    dst.w = 3 * size_texture;
+    dst.h = window_height;
+    dst.x = 0;
+    dst.y = 0;
+    SDL_Texture* texture = getTileTexture(123,render);
+    SDL_RenderCopy(render,texture,NULL,&dst);
+}
+
+void Background::print_nen(SDL_Renderer* render) {
+    SDL_Rect dst;
+    dst.w = window_width;
+    dst.h = window_height;
+    dst.x = 0;
+    dst.y = 0;
+    SDL_Texture* texture = getTileTexture(787878,render);
+    SDL_RenderCopy(render,texture,NULL,&dst);
+}
+void Background::print_choosen_map(SDL_Renderer* render) {
+    SDL_Rect dst;
+    dst.w = window_width;
+    dst.h = window_height;
+    dst.x = 0;
+    dst.y = 0;
+    SDL_Texture* texture = getTileTexture(808080,render);
+    SDL_RenderCopy(render,texture,NULL,&dst);
+}
+void Background::print_choosen_level(SDL_Renderer* render) {
+    SDL_Rect dst;
+    dst.w = window_width;
+    dst.h = window_height;
+    dst.x = 0;
+    dst.y = 0;
+    SDL_Texture* texture = getTileTexture(797979,render);
+    SDL_RenderCopy(render,texture,NULL,&dst);
+}
+void Background::print_choosen_enemy(SDL_Renderer* render) {
+    SDL_Rect dst;
+    dst.w = window_width;
+    dst.h = window_height;
+    dst.x = 0;
+    dst.y = 0;
+    SDL_Texture* texture = getTileTexture(818181,render);
+    SDL_RenderCopy(render,texture,NULL,&dst);
+}
 Background::Background(int type,int sz,int width,int height) {
     window_width = width;
     window_height = height;
@@ -30,6 +76,7 @@ void Background::typemap(int id) {
     for(int i = stx ; i < endx ; i ++) {
         for(int j = sty ; j < endy ; j ++) {
             sizemap[i][j].push_back(id * 20 + cnt);
+            matrix[i][j].push_back(0);
         }
     }
     ++cnt;
@@ -72,7 +119,7 @@ void Background::loadMap(const char* path) {
                 num = num * 10 + cell[i] - '0';
             }
             if(num > 0) sizemap[col][row].push_back(num);
-            if(num >= 100) matrix[col][row] = 1;
+            if(num >= 100) matrix[col][row].push_back(1);
             ++ col;
         }
         ++row;
@@ -89,7 +136,6 @@ SDL_Texture* Background::Loadtexture(const char* path,SDL_Renderer* render) {
 
 SDL_Texture* Background::getTileTexture(int id,SDL_Renderer* render) {
     if(!tileTexture.count(id)) {
-            cerr << "tonbonhokhong" << id <<"\n";
         string filename = to_string(id) + ".png";
         SDL_Texture* texture = Loadtexture(filename.c_str(),render);
         if(texture) {
@@ -123,16 +169,14 @@ void Background::BackgroundD(SDL_Renderer* render) {
             }
         }
     }
+    print_UI(render);
 }
 
 bool Background::canwalk(int sx,int sy) {
     int u = (sx + 16) / size_texture;
     int v = (sy + 16) / size_texture;
     if(u < 0 || v < 0) return false;
-    if(u < stx || u >= endx || v < sty || v >= endy || matrix[u][v] == 1) return false;
-//    for(int type : sizemap[u][v]) {
-//        if(type % 100 == 0) return false;
-//    }
+    if(u < stx || u >= endx || v < sty || v >= endy || matrix[u][v].back() == 1) return false;
     return true;
 }
 
@@ -140,38 +184,33 @@ bool Background::canwalk_Enemy(int sx,int sy) {
     int u = (sx + 16) / size_texture;
     int v = (sy + 16) / size_texture;
     if(u < 0 || v < 0) return false;
-    if(matrix[u][v] == 2) cout <<"chungtakhongthedi " <<u <<" "<<v <<"\n";
-    if(u < stx || u >= endx || v < sty || v >= endy || matrix[u][v] == 1 || matrix[u][v] == 2) return false;
-
-//    for(int type : sizemap[u][v]) {
-//        if(type % 100 == 0) return false;
-//    }
+    if(u < stx || u >= endx || v < sty || v >= endy || matrix[u][v].back() == 1 || matrix[u][v].back() == 2) return false;
     return true;
 }
 
 mt19937_64 rds(chrono::steady_clock::now().time_since_epoch().count());
-int random_item(int l = 0, int r = 10) { return uniform_int_distribution<int>(l, r)(rds);}
+int random_item(int l = 0, int r = 3) { return uniform_int_distribution<int>(l, r)(rds);}
 
 void Background::del_pos(int sx,int sy) {
     int u = sx/size_texture;
     int v = sy/size_texture;
     if(u < 0 || v < 0) return;
     if(sizemap[u][v].back() == 100) {
-        sizemap[u][v].pop_back(),matrix[u][v] = 0;
+        sizemap[u][v].pop_back(),matrix[u][v].pop_back();
         int id = random_item();
         if(id >= 3) id = 0;
         if(id) {
             sizemap[u][v].push_back(id * 1000000);
         }
     }
-    else if(matrix[u][v] == 2) matrix[u][v] = 0;
+    else if(matrix[u][v].back() == 2) matrix[u][v].pop_back();
 }
 
-void Background::block_tile(int sx,int sy) {
+void Background::block_tile(int sx,int sy,int c) {
     int u = sx/size_texture;
     int v = sy/size_texture;
     if(u < 0 || v < 0) return;
-    if(matrix[u][v] == 0) matrix[u][v] = 2;
+    if(sizemap[u][v].back() != 200)matrix[u][v].push_back(c);
 }
 
 pair<int,int> Background::dijsktra(int sx,int sy) {
@@ -187,9 +226,8 @@ pair<int,int> Background::dijsktra(int sx,int sy) {
         int val = pq.top().first;
         int x = pq.top().second.first;
         int y = pq.top().second.second;
-        cout << x <<" "<<y <<"\n";
         pq.pop();
-        if(matrix[x][y] == 0) {
+        if(matrix[x][y].back() == 0) {
             if(mina.first > val) {
                 mina.second = make_pair(x,y);
                 mina.first = val;
@@ -207,11 +245,13 @@ pair<int,int> Background::dijsktra(int sx,int sy) {
             }
         }
     }
-    cout << "truyvettttt" << mina.second.first <<" "<<mina.second.second <<"\n";
+    if(mina.first == 100000) {
+        return make_pair(xx,yy);
+    }
     while(par[mina.second.first][mina.second.second] != make_pair((sx + 16)/32,(sy + 16)/32)) {
             mina.second = par[mina.second.first][mina.second.second];
-            cout << "truyvettttt" << mina.second.first <<" "<<mina.second.second <<"\n";
     }
+//    cout << (sx + 16)/32 <<" "<<(sy + 16)/32 <<" "  <<"duong di tiep theo la    " << mina.second.first <<" "<<mina.second.second <<"\n";
     return mina.second;
 }
 
@@ -219,7 +259,7 @@ bool Background::check_dangerous(int sx,int sy) {
     sx = (sx + 16) / size_texture;
     sy = (sy + 16) / size_texture;
     if(sx < 0 || sy < 0) return false;
-    if(matrix[sx][sy] == 2) return true;
+    if(matrix[sx][sy].back() != 0) return true;
     return false;
 }
 bool Background::check_tile(int sx,int sy) {
@@ -239,7 +279,6 @@ void Background::up_death(int sx,int sy) {
     int u = sx/size_texture;
     int v = sy/size_texture;
     if(u < 0 || v < 0) return;
-    cout << "chetmemayroi     " << u <<" "<<v <<"\n";
     death[u][v] = 1;
 }
 

@@ -7,6 +7,7 @@
 #include <SDL_image.h>
 #include "background.h"
 #include <utility>
+#include <vector>
 class Player{
 private:
     SDL_Rect dstRect;
@@ -17,20 +18,30 @@ private:
     SDL_Texture* currentTexture = nullptr;
     SDL_Renderer* renderer_player = nullptr;
 
+    bool key_w = false;
+    bool key_s = false;
+    bool key_d = false;
+    bool key_a = false;
+    bool key_space = false;
+
     int speed = 32;
     int health  = 2;
     int point = 0;
 
-    Weapon weapons;
-    const Uint8* keyStates = nullptr;
     bool moving = false;
     bool isrunning = false;
     Uint32 lastTime = SDL_GetTicks();
+
+    int cnt_bom = 1;
+    vector<Weapon> weaponss;
 
     int dx[4] = {0,32,-32,0};
     int dy[4] = {32,0,0,-32};
 
 public:
+    int Get_count_bom() {
+        return weaponss.size();
+    }
     int Get_point() {
         return point;
     }
@@ -56,7 +67,7 @@ public:
     void update(Background& bg,SDL_Renderer* render);
     void skill(Background& bg,SDL_Renderer* render);
 //    void update(Background& bg);
-    bool alive() {
+    int alive() {
         return health;
     }
     void down_alive() {
@@ -66,10 +77,12 @@ public:
         health ++;
     }
     void update_power() {
-        weapons.update_power();
+        for(auto weapons : weaponss) {
+            weapons.update_power();
+        }
     }
     void change_gun(){
-        weapons.change_Gun();
+        weaponss[0].change_Gun();
     }
 };
 

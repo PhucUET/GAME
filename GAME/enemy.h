@@ -17,7 +17,7 @@ private:
     SDL_Texture* currentTexture = nullptr;
 
     int speed = 32;
-    int health = 1;
+    int health = 0;
     int point = 0;
     int times = 0;
 
@@ -29,8 +29,8 @@ private:
     Uint32 lastTime = SDL_GetTicks();
     Uint32 RunTime = SDL_GetTicks();
 
-    int dx[6] = {0,-32,32,0,0,0};
-    int dy[6] = {32,0,0,-32,0,0};
+    int dx[4] = {0,-32,32,0};
+    int dy[4] = {32,0,0,-32};
 
 public:
     Enemy(int sx,int sy);
@@ -62,8 +62,11 @@ public:
     void up_alive() {
         health ++;
     }
-    void change_Bom() {
-        weapons.change_Bom();
+    void update_power() {
+        weapons.update_power();
+    }
+    void change_Gun(){
+        weapons.change_Gun();
     }
 //    void update(Background& bg);
 

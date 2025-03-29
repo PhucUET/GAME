@@ -2,8 +2,8 @@
 #define BACKGROUND.H
 
 #include <iostream>
-#include "SDL.h"
-#include "SDL_image.h"
+#include <SDL.h>
+#include <SDL_image.h>
 #include <vector>
 #include <fstream>
 #include <map>
@@ -12,7 +12,7 @@ using namespace std;
 
 class Background{
 private:
-    int matrix[200][200];
+    vector<int> matrix[200][200];
     bool character[200][200];
     bool death[200][200];
     vector<int> sizemap[200][200];
@@ -33,6 +33,11 @@ private:
 
 
 public:
+    void print_UI(SDL_Renderer* render);
+    void print_nen(SDL_Renderer* render);
+    void print_choosen_map(SDL_Renderer* render);
+    void print_choosen_enemy(SDL_Renderer* render);
+    void print_choosen_level(SDL_Renderer* render);
     Background(int type, int sz,int width,int height);
     void typemap(int id);
     void loadMap(const char* path);
@@ -43,7 +48,7 @@ public:
     bool canwalk(int sx,int sy);
     bool canwalk_Enemy(int sx,int sy);
     void del_pos(int sx,int sy);
-    void block_tile(int sx,int sy);
+    void block_tile(int sx,int sy,int c);
     pair<int,int> dijsktra(int sx,int sy);
     bool check_dangerous(int sx,int sy);
     bool wall_check(int sx,int sy) {

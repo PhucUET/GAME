@@ -69,11 +69,12 @@ void Enemy::skill(Background& bg,SDL_Renderer* render) {
     int sy = dstRect.y + 16;
     weapons.check_type();
     if(weapons.Bom()) {
-        bg.block_tile(sx,sy);
+        bg.block_tile(sx,sy,1);
         for(int i = 0 ; i < 4 ; i ++) {
             for(int k = 1 ; k <= weapons.Power_Bom() ; k ++) {
                 if(bg.wall_check(sx + dx[i] * k,sy + dy[i] * k)) break;
-                bg.block_tile(sx + k * dx[i],sy + k * dy[i]);
+                if(bg.check_destroy(sx + dx[i] * k,sy + dy[i] * k)) break;
+                bg.block_tile(sx + k * dx[i],sy + k * dy[i],2);
             }
         }
         weapons.render_Bom(render,sx,sy);
@@ -82,19 +83,22 @@ void Enemy::skill(Background& bg,SDL_Renderer* render) {
         SDL_Texture* texture = nullptr;
         int direct = currentAnimation;
         if(direct == 0 || direct == 3)texture = bg.getTileTexture(88888,render);
-        else texture = bg.getTileTexture(888888,render),direct = 3 - direct;
+        else texture = bg.getTileTexture(888888,render);
         while(!bg.wall_check(sx = sx + dx[direct],sy = sy + dy[direct])) {
             bg.rendertexture(texture,sx,sy,render);
             bg.up_death(sx,sy);
             bg.up_death(sx,sy);
             if(bg.check_character(sx,sy)) point += 500;
-            if(bg.check_destroy(sx,sy)) point += 50;
-            bg.del_pos(sx,sy);
+            if(bg.check_destroy(sx,sy)) {
+                point += 50;
+                bg.del_pos(sx,sy);
+                break;
+            }
         }
     }
 }
 
-const int RUN_DELAY = 300;
+const int RUN_DELAY = 400;
 mt19937_64 rd(chrono::steady_clock::now().time_since_epoch().count());
 int random_direction(int l = 0, int r = 3) { return uniform_int_distribution<int>(l, r)(rd);}
 int random_yn(int l = 0, int r = 1) {return uniform_int_distribution<int>(l,r)(rd);}
@@ -104,7 +108,6 @@ void Enemy::nextMove(SDL_Renderer* render,Background& bg) {
         RunTime = Now;
     } else return;
     if(bg.check_dangerous(dstRect.x,dstRect.y)) {
-        cout <<"chay ngay diiiiiii\n";
         pair<int,int> new_pos = bg.dijsktra(dstRect.x,dstRect.y);
         for(int i = 0 ; i < 4 ; i ++) {
             if(new_pos.first * 32 - 16 - dstRect.x == dx[i] && new_pos.second * 32 - 16 - dstRect.y == dy[i]) {
@@ -114,9 +117,8 @@ void Enemy::nextMove(SDL_Renderer* render,Background& bg) {
             }
         }
     } else {
-        SDL_Delay(100);
         int id = random_direction();
-        while(4 - id == currentAnimation && bg.canwalk_Enemy(dstRect.x + dx[currentAnimation],dstRect.y + dy[currentAnimation])) {
+        while(3 - id == currentAnimation && bg.canwalk_Enemy(dstRect.x + dx[currentAnimation],dstRect.y + dy[currentAnimation])) {
             id =random_direction();
         }
         if(bg.canwalk_Enemy(dstRect.x + dx[id],dstRect.y + dy[id])) {
@@ -136,6 +138,7 @@ void Enemy::Up_All(SDL_Renderer* render, Background& bg,float deltaTime) {
             SDL_Texture* texture = nullptr;
             bg.del_pos(u,v);
             bg.up_death(u,v);
+            bg.block_tile(u,v,0);
             texture = bg.getTileTexture(99999,render);
             bg.rendertexture(texture, u, v,render);
             for(int i = 0 ; i < 4 ; i ++) {
@@ -161,13 +164,13 @@ void Enemy::Up_All(SDL_Renderer* render, Background& bg,float deltaTime) {
     }
 
 
-    if(bg.check_tile(dstRect.x,dstRect.y)) {
+    if(bg.check_tile(dstRect.x,dstRect.y) || bg.check_character(dstRect.x + 16,dstRect.y + 16)) {
         int c = random_direction();
-        if(c == 2) {
+        if(c == 2 || bg.check_character(dstRect.x + 16,dstRect.y + 16)) {
            if(!weapons.check_bom()) skill(bg,render);
         }
     }
-    nextMove(render,bg);
+//    nextMove(render,bg);
     render_update(render);
     return;
 }
