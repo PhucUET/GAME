@@ -22,7 +22,7 @@ private:
     int times = 0;
 
 
-    Weapon weapons;
+    vector<Weapon> weaponss;
     const Uint8* keyStates = nullptr;
     bool moving = false;
     bool isrunning = false;
@@ -34,8 +34,26 @@ private:
 
 public:
     Enemy(int sx,int sy);
+    int Power_bom() {
+        return weaponss[0].Power_Bom();
+    }
+    int Get_point() {
+        return point;
+    }
+    void up_power_bom() {
+        for(auto &weapons : weaponss) {
+            weapons.update_power();
+        }
+    }
     pair<int,int> location() {
         return make_pair(dstRect.x,dstRect.y);
+    }
+    int Get_count_bom() {
+        return weaponss.size();
+    }
+    void up_cnt_bom() {
+        Weapon new_weapon;
+        weaponss.push_back(new_weapon);
     }
     int idleWidth = 0, idleHeight = 0;
     int runWidth = 0, runHeight = 0;
@@ -53,7 +71,7 @@ public:
     void Up_All(SDL_Renderer* render,Background& bg,float deltaTime);
     void skill(Background& bg,SDL_Renderer* render);
     void nextMove(SDL_Renderer* render,Background& bg);
-    bool alive() {
+    int alive() {
         return health;
     }
     void down_alive() {
@@ -63,10 +81,12 @@ public:
         health ++;
     }
     void update_power() {
-        weapons.update_power();
+        for(auto weapons : weaponss) {
+            weapons.update_power();
+        }
     }
     void change_Gun(){
-        weapons.change_Gun();
+        weaponss[0].change_Gun();
     }
 //    void update(Background& bg);
 

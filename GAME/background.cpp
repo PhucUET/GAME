@@ -125,6 +125,13 @@ void Background::loadMap(const char* path) {
         ++row;
     }
     file.close();
+
+    for(int j = sty ; j < endy ; j ++) {
+        for(int i = stx ; i < endx ; i ++) {
+            cout << matrix[i][j].back() <<" ";
+        }
+        cout << endl;
+    }
 }
 SDL_Texture* Background::Loadtexture(const char* path,SDL_Renderer* render) {
     SDL_Texture* texture = IMG_LoadTexture(render,path);
@@ -176,41 +183,54 @@ bool Background::canwalk(int sx,int sy) {
     int u = (sx + 16) / size_texture;
     int v = (sy + 16) / size_texture;
     if(u < 0 || v < 0) return false;
-    if(u < stx || u >= endx || v < sty || v >= endy || matrix[u][v].back() == 1) return false;
+    if(u < stx || u >= endx || v < sty || v >= endy ) return false;
+    for(int type : matrix[u][v]) if(type == 1) return false;
     return true;
 }
 
 bool Background::canwalk_Enemy(int sx,int sy) {
     int u = (sx + 16) / size_texture;
     int v = (sy + 16) / size_texture;
+    for(int j = sty ; j < endy ; j ++) {
+        for(int i = stx ; i < endx ; i ++) {
+            cout << matrix[i][j].back() <<" ";
+        }
+        cout << endl;
+    }
     if(u < 0 || v < 0) return false;
-    if(u < stx || u >= endx || v < sty || v >= endy || matrix[u][v].back() == 1 || matrix[u][v].back() == 2) return false;
-    return true;
+    return !(matrix[u][v].back());
+//    for(int type : matrix[u][v]) if(type >= 1) return false;
+//    return true;
 }
 
 mt19937_64 rds(chrono::steady_clock::now().time_since_epoch().count());
-int random_item(int l = 0, int r = 3) { return uniform_int_distribution<int>(l, r)(rds);}
+int random_item(int l = 0, int r = 7) { return uniform_int_distribution<int>(l, r)(rds);}
 
 void Background::del_pos(int sx,int sy) {
     int u = sx/size_texture;
     int v = sy/size_texture;
     if(u < 0 || v < 0) return;
     if(sizemap[u][v].back() == 100) {
-        sizemap[u][v].pop_back(),matrix[u][v].pop_back();
+        sizemap[u][v].pop_back();if(matrix[u][v].size() > 1)matrix[u][v].pop_back();
         int id = random_item();
-        if(id >= 3) id = 0;
+        if(id >= 5) id = 0;
         if(id) {
+            if(matrix[u][v].back() != 0) if(matrix[u][v].size() > 1) matrix[u][v].pop_back();
             sizemap[u][v].push_back(id * 1000000);
         }
     }
-    else if(matrix[u][v].back() == 2) matrix[u][v].pop_back();
+    else if(matrix[u][v].back() == 2) if(matrix[u][v].size() > 1) matrix[u][v].pop_back();
 }
 
 void Background::block_tile(int sx,int sy,int c) {
     int u = sx/size_texture;
     int v = sy/size_texture;
     if(u < 0 || v < 0) return;
-    if(sizemap[u][v].back() != 200)matrix[u][v].push_back(c);
+    if(c == 0) {
+        if(matrix[u][v].size() > 1) matrix[u][v].pop_back();
+        return;
+    }
+    if(sizemap[u][v].back() != 200) matrix[u][v].push_back(c);
 }
 
 pair<int,int> Background::dijsktra(int sx,int sy) {

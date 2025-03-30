@@ -32,6 +32,8 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="SoundManager.cpp" />
+		<Unit filename="SoundManager.h" />
 		<Unit filename="background.cpp" />
 		<Unit filename="background.h" />
 		<Unit filename="enemy.cpp" />

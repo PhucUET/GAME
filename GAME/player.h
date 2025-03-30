@@ -49,6 +49,10 @@ public:
     pair<int,int> location() {
         return make_pair(dstRect.x,dstRect.y);
     }
+    void up_cnt_bom() {
+        Weapon new_weapon;
+        weaponss.push_back(new_weapon);
+    }
     int idleWidth = 0, idleHeight = 0;
     int runWidth = 0, runHeight = 0;
     int frame_count = 0;
@@ -69,6 +73,14 @@ public:
 //    void update(Background& bg);
     int alive() {
         return health;
+    }
+    int Power_bom() {
+        return weaponss[0].Power_Bom();
+    }
+    void up_power_bom() {
+        for(auto &weapons : weaponss) {
+            weapons.update_power();
+        }
     }
     void down_alive() {
         health --;

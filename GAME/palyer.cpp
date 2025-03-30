@@ -33,6 +33,7 @@ SDL_Texture* Player::LoadTexture(const char* path, int& spriteSheetWidth, int& s
 }
 
 void Player::render_Player(SDL_Renderer* render) {
+    up_cnt_bom();
     idleTexture = LoadTexture(idle_namefile,idleWidth,idleHeight,render);
     runTexture = LoadTexture(run_namefile,runWidth,runHeight,render);
     if (!idleTexture || !runTexture) return;
@@ -66,14 +67,7 @@ void Player::update(Background& bg,SDL_Renderer* render) {
     }
     if (key_space) {
             cout <<"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n";
-//            for(auto &weapons : weaponss) {
-                skill(bg,render);
-//                if(weapons.Bom()) {
-//                    cout << ++cnt <<"\n";
-//                    if(!weapons.check_bom())
-//                    break;
-//                } else skill(bg,render);
-//            }
+            skill(bg,render);
     }
 
     if (moving) {
@@ -170,7 +164,6 @@ void Player::Up_All(SDL_Renderer* render, Background& bg,float deltaTime) {
                     int u = pos.first;
                     int v = pos.second;
                     SDL_Texture* texture = nullptr;
-                    bg.del_pos(u,v);
                     bg.up_death(u,v);
                     bg.block_tile(u,v,0);
                     texture = bg.getTileTexture(99999,render);
@@ -186,6 +179,7 @@ void Player::Up_All(SDL_Renderer* render, Background& bg,float deltaTime) {
                             }
                             bg.rendertexture(texture, u + dx[i] * k, v + dy[i] * k,render);
                             bg.up_death(u + dx[i] * k,v + dy[i] * k);
+                            bg.block_tile(u + dx[i] * k,v + dy[i] * k,0);
                             if(bg.check_destroy(u + dx[i] * k,v + dy[i] * k)) {
                                 bg.del_pos(u + dx[i] * k,v + dy[i] * k);
                                 break;
@@ -218,7 +212,7 @@ void Player::skill(Background& bg,SDL_Renderer* render) {
             bg.block_tile(sx,sy,1);
             for(int i = 0 ; i < 4 ; i ++) {
                 for(int k = 1 ; k <= weapons.Power_Bom() ; k ++) {
-                    if(bg.wall_check(sx + dx[i] * k,sy + dy[i] * k)) break;
+                    if(bg.wall_check(sx + dx[i] * k,sy + dy[i] * k) || bg.check_destroy(sx + dx[i] * k,sy + dy[i] * k)) break;
                     bg.block_tile(sx + k * dx[i],sy + k * dy[i],2);
                 }
             }

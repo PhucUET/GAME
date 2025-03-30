@@ -4,6 +4,8 @@
 #include "textrender.h"
 #include "enemy.h"
 #include <SDL.h>
+#include <sstream>
+#include <cmath>
 #include <SDL_ttf.h>
 #include <string>
 #include <SDL_image.h>
@@ -43,6 +45,20 @@ void Init() {
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 }
 
+string formatCountdownTime(float remainingSeconds) {
+    remainingSeconds = max(0.0f, remainingSeconds);
+
+    int totalSecondsInt = static_cast<int>(remainingSeconds);
+
+    int minutes = totalSecondsInt / 60;
+    int seconds = totalSecondsInt % 60;
+
+    stringstream ss;
+    ss << (minutes < 10 ? "0" : "") << minutes << ":" << (seconds < 10 ? "0" : "") << seconds;
+
+    return ss.str();
+}
+
 void quitSDL() {
     IMG_Quit();
     SDL_DestroyRenderer(renderer);
@@ -60,6 +76,8 @@ Uint32 currentTime;
 float deltaTime = 0.0f;
 void up_P1() {
     P1.Up_All(renderer,background,deltaTime);
+    pair<int,int> pos_P1 = P1.location();
+    background.update_character(pos_P1.first,pos_P1.second,1);
 }
 void up_E1() {
     E1.Up_All(renderer,background,deltaTime);
@@ -84,6 +102,12 @@ void update_pos() {
             if(item == 2000000) {
                 E1.up_alive();
             }
+            if(item == 3000000) {
+                E1.update_power();
+            }
+            if(item == 4000000) {
+                E1.up_cnt_bom();
+            }
         }
         E1.nextMove(renderer,background);
         pos_E1 = E1.location();
@@ -103,6 +127,12 @@ void update_pos() {
             }
             if(item == 2000000) {
                 E2.up_alive();
+            }
+            if(item == 3000000) {
+                E2.update_power();
+            }
+            if(item == 4000000) {
+                E2.up_cnt_bom();
             }
         }
         E2.nextMove(renderer,background);
@@ -124,6 +154,12 @@ void update_pos() {
             if(item == 2000000) {
                 E3.up_alive();
             }
+            if(item == 3000000) {
+                E3.update_power();
+            }
+            if(item == 4000000) {
+                E3.up_cnt_bom();
+            }
         }
         E3.nextMove(renderer,background);
         pos_E3 = E3.location();
@@ -139,21 +175,17 @@ void update_pos() {
         if(int type = background.check_item(pos_P1.first,pos_P1.second)) {
             if(type == 1000000) {
                 P1.change_gun();
-            } else {
+            }
+            if(type == 2000000){
                 P1.up_alive();
             }
+            if(type == 3000000){
+                P1.up_power_bom();
+            }
+            if(type == 4000000){
+                P1.up_cnt_bom();
+            }
         }
-        background.update_character(pos_P1.first,pos_P1.second,1);
-    }
-    if(E2.alive()) {
-        pair<int,int> pos_E2 = E2.location();
-        background.update_character(pos_E2.first,pos_E2.second,0);
-        E2.nextMove(renderer,background);
-    }
-    if(E3.alive()) {
-        pair<int,int> pos_E3 = E3.location();
-        background.update_character(pos_E3.first,pos_E3.second,0);
-        E3.nextMove(renderer,background);
     }
 }
 
@@ -245,7 +277,6 @@ void listen_Input() {
             }
         }
     }
-    cout << key_1 <<" "<<key_2 <<" "<<key_3 <<" " << key_space <<"\n";
 }
 
 int main(int argc, char* argv[])
@@ -254,10 +285,15 @@ int main(int argc, char* argv[])
     TextRenderer* textrender = new TextRenderer(14);
     int run = 0;
     int cnt = 0;
+    const float GAME_DURATION_SECONDS = 80.0f; // Ví dụ: 3 phút
+    Uint32 startTime = SDL_GetTicks(); // Thời điểm bắt đầu trò chơi
+    float remainingTime = GAME_DURATION_SECONDS; // Thời gian còn lại ban đầu
+    bool timeIsUp = false;
+
     bool game_start = true;
     while(!run) {
         if(cnt < 4)SDL_RenderClear(renderer), listen_Input();
-        SDL_Delay(30);
+        SDL_Delay(10);
         if(cnt == 0) {
             background.print_nen(renderer);
             if(key_space) cnt ++;
@@ -287,15 +323,24 @@ int main(int argc, char* argv[])
             if(enemy_count >= 3) {
                 E3.up_alive();
             }
+            key_1 = key_2 = key_3 = false;
+
         }
         if(cnt == 3) {
             background.print_choosen_level(renderer);
             if(key_1 + key_2 + key_3 > 0) cnt ++;
             key_1 = key_2 = key_3 = false;
             if(key_esc) cnt --;
+            key_1 = key_2 = key_3 = false;
         }
         if(cnt == 4) {
+            if(!P1.alive()) {
+                background.print_UI(renderer);
+                continue;
+            }
+
             if(game_start) {
+                startTime = SDL_GetTicks();
                 game_start = false;
                 background.typemap(stt_map - 1);
                 string type_map = to_string(stt_map) + ".csv";
@@ -313,38 +358,73 @@ int main(int argc, char* argv[])
 
             Gameloop();
 
-            string health = to_string(P1.alive());
-            textrender->renderText(renderer,health,black,72,22);
-//            string count_bom =  to_string(P1.Get_count_bom());
-//            textrender->renderText(renderer,count_bom,black,72,44);
+            string health_P1 = to_string(P1.alive());
+            textrender->renderText(renderer,health_P1,black,72,22);
+            string count_bom_P1 =  to_string(P1.Get_count_bom());
+            textrender->renderText(renderer,count_bom_P1,black,72,42);
+            string power_bom_P1 = to_string(P1.Power_bom());
+            textrender->renderText(renderer,power_bom_P1,black,72,62);
+            string point_P1 = to_string(P1.Get_point());
+            textrender->renderText(renderer,point_P1,black,18,85);
+
+            string health_E1 = to_string(E1.alive());
+            textrender->renderText(renderer,health_E1,black,72,134);
+            string count_bom_E1 =  to_string(E1.Get_count_bom());
+            textrender->renderText(renderer,count_bom_E1,black,72,154);
+            string power_bom_E1 = to_string(E1.Power_bom());
+            textrender->renderText(renderer,power_bom_E1,black,72,174);
+            string point_E1 = to_string(E1.Get_point());
+            textrender->renderText(renderer,point_E1,black,18,197);
 
 
+            string health_E2 = to_string(E2.alive());
+            textrender->renderText(renderer,health_E2,black,72,252);
+            string count_bom_E2 =  to_string(E2.Get_count_bom());
+            textrender->renderText(renderer,count_bom_E2,black,72,272);
+            string power_bom_E2 = to_string(E2.Power_bom());
+            textrender->renderText(renderer,power_bom_E2,black,72,292);
+            string point_E2 = to_string(E2.Get_point());
+            textrender->renderText(renderer,point_E2,black,18,313);
 
+            string health_E3 = to_string(E3.alive());
+            textrender->renderText(renderer,health_E3,black,72,365);
+            string count_bom_E3 =  to_string(E3.Get_count_bom());
+            textrender->renderText(renderer,count_bom_E3,black,72,385);
+            string power_bom_E3 = to_string(E3.Power_bom());
+            textrender->renderText(renderer,power_bom_E3,black,72,405);
+            string point_E3 = to_string(E3.Get_point());
+            textrender->renderText(renderer,point_E3,black,18,427);
 
-
-
-            SDL_RenderPresent(renderer);
             if(cnt_enemy == 0) {
                 cout <<"you win\n";
                 break;
             }
+            if (!timeIsUp) {
+                Uint32 currentTime = SDL_GetTicks();
+                float elapsedTime = (currentTime - startTime) / 1000.0f; // Thời gian đã trôi qua (giây)
+                remainingTime = GAME_DURATION_SECONDS - elapsedTime;   // Tính thời gian còn lại
+
+                if (remainingTime <= 0.0f) {
+                    remainingTime = 0.0f; // Đảm bảo không âm
+                    timeIsUp = true;
+                    std::cout << "Hết giờ!" << std::endl;
+                }
+            }
+            string formattedTime = formatCountdownTime(remainingTime);
+            SDL_Color timeColor = {255, 255, 255, 255}; // Trắng
+            if (remainingTime < 10.0f && !timeIsUp) { // Dưới 10 giây
+                 timeColor = {255, 0, 0, 255}; // Đỏ
+            } else if (timeIsUp) {
+                 timeColor = {255, 0, 0, 255}; // Vẫn giữ màu đỏ khi hết giờ
+            }
+            textrender->renderText(renderer,formattedTime,timeColor,18,450);
+            SDL_RenderPresent(renderer);
         }
         if(cnt < 4) {
             SDL_Delay(100);
             SDL_RenderPresent(renderer);
         }
-//         while(SDL_PollEvent(&e))
-//            if (e.type == SDL_QUIT) run = false;
     }
-
-//    P1.render_Player(renderer);
-//    background.typemap(0);
-//    background.loadMap("1.csv");
-
-//    SDL_RenderPresent(renderer);
-////    E1.down_alive();
-//    P1.update_power();
-//    Gameloop();
     quitSDL();
     return 0;
 }
