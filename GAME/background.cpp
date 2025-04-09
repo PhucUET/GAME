@@ -212,12 +212,6 @@ bool Background::canwalk(int sx,int sy) {
 bool Background::canwalk_Enemy(int sx,int sy) {
     int u = (sx + 16) / size_texture;
     int v = (sy + 16) / size_texture;
-    for(int j = sty ; j < endy ; j ++) {
-        for(int i = stx ; i < endx ; i ++) {
-            cout << matrix[i][j].back() <<" ";
-        }
-        cout << endl;
-    }
     if(u < 0 || v < 0) return false;
     return !(matrix[u][v].back());
 //    for(int type : matrix[u][v]) if(type >= 1) return false;
