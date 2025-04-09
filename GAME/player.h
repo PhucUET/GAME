@@ -23,9 +23,10 @@ private:
     bool key_d = false;
     bool key_a = false;
     bool key_space = false;
+    bool key_esc = false;
 
     int speed = 32;
-    int health  = 2;
+    int health  = 1;
     int point = 0;
 
     bool moving = false;
@@ -39,6 +40,11 @@ private:
     int dy[4] = {32,0,0,-32};
 
 public:
+    void del_all() {
+        SDL_DestroyTexture(idleTexture);
+        SDL_DestroyTexture(runTexture);
+        SDL_DestroyTexture(currentTexture);
+    }
     int Get_count_bom() {
         return weaponss.size();
     }
@@ -62,14 +68,23 @@ public:
     int animationRun_count = 0; // có bao nhiêu animation chạy
     int framecountIdle = 0,framecountRun = 0; // có bao nhiêu frame
     int curFrameCount = 0; // đang ở frame của run idle .....
+    void reset(int x,int y) {
+        health = 1;
+        point = 0;
+        cnt_bom = 0;
+        weaponss.clear();
+        dstRect.x = x;
+        dstRect.y = y;
+        curFrameCount = 0;
+    }
     SDL_Texture* LoadTexture(const char* path, int& spriteSheetWidth, int& spriteSheetHeight,SDL_Renderer* render);
     void is_renderer(SDL_Renderer* renderer);
-    void handleInput();
+    void handleInput(bool& stop);
     void render_Player(SDL_Renderer* render);
     void render_update(SDL_Renderer* render);
-    void Up_All(SDL_Renderer* render,Background& bg,float deltaTime);
-    void update(Background& bg,SDL_Renderer* render);
-    void skill(Background& bg,SDL_Renderer* render);
+    void Up_All(SDL_Renderer* render,Background& bg,float deltaTime,SoundManager& sound);
+    void update(Background& bg,SDL_Renderer* render,SoundManager& sound);
+    void skill(Background& bg,SDL_Renderer* render,SoundManager& sound);
 //    void update(Background& bg);
     int alive() {
         return health;

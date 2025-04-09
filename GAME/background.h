@@ -33,6 +33,36 @@ private:
 
 
 public:
+    void reset() {
+        for(int i = stx ; i <= endx ; i ++) {
+            for(int j = sty ; j <= endy ; j ++) {
+                sizemap[i][j].clear();
+                matrix[i][j].clear();
+                character[i][j] = false;
+                death[i][j] = false;
+            }
+        }
+    }
+
+    void del_all() {
+        for(int i = stx ; i <= endx ; i ++) {
+            for(int j = sty ; j <= endy ; j ++) {
+                sizemap[i][j].clear();
+                matrix[i][j].clear();
+                character[i][j] = false;
+                death[i][j] = false;
+            }
+        }
+        for (auto& pair : tileTexture) {
+            if (pair.second != nullptr) {
+                SDL_DestroyTexture(pair.second);
+                pair.second = nullptr;
+            }
+        }
+        tileTexture.clear();
+    }
+
+    void huong_dan(SDL_Renderer* render);
     void print_UI(SDL_Renderer* render);
     void print_nen(SDL_Renderer* render);
     void print_choosen_map(SDL_Renderer* render);
@@ -69,6 +99,8 @@ public:
     bool check_character(int sx,int sy);
     bool check_destroy(int sx,int sy);
     int check_item(int sx,int sy);
+    void print_Win(SDL_Renderer* render);
+    void print_Lose(SDL_Renderer* render);
 
 };
 #endif // BACKGROUND

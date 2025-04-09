@@ -4,14 +4,14 @@
 	<SDL.h>
 	<SDL_image.h>
 
-1743370181 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\palyer.cpp
+1744206912 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\palyer.cpp
 	"player.h"
 	<SDL.h>
 	<SDL_image.h>
 	<thread>
 	"weapon.h"
 
-1743267839 c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\player.h
+1744206922 c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\player.h
 	"weapon.h"
 	<iostream>
 	<SDL.h>
@@ -20,10 +20,11 @@
 	<utility>
 	<vector>
 
-1743370239 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\main.cpp
+1744207092 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\main.cpp
 	<iostream>
 	"background.h"
 	"player.h"
+	"SoundManager.h"
 	"textrender.h"
 	"enemy.h"
 	<SDL.h>
@@ -33,7 +34,7 @@
 	<string>
 	<SDL_image.h>
 
-1743256598 c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\background.h
+1744195925 c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\background.h
 	<iostream>
 	<SDL.h>
 	<SDL_image.h>
@@ -42,7 +43,7 @@
 	<map>
 	<utility>
 
-1743370162 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\background.cpp
+1744206912 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\background.cpp
 	<iostream>
 	"background.h"
 	<SDL.h>
@@ -56,18 +57,19 @@
 	<chrono>
 	<random>
 
-1743255494 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\weapon.cpp
+1744200897 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\weapon.cpp
 	<iostream>
 	"weapon.h"
 
-1743219259 c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\weapon.h
+1744200917 c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\weapon.h
 	<SDL.h>
 	<SDL_image.h>
 	<string>
 	<utility>
 	"background.h"
+	"SoundManager.h"
 
-1743370190 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\enemy.cpp
+1744204356 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\enemy.cpp
 	"enemy.h"
 	<SDL.h>
 	<SDL_image.h>
@@ -76,8 +78,9 @@
 	<chrono>
 	"weapon.h"
 
-1743269976 c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\enemy.h
+1744206912 c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\enemy.h
 	"weapon.h"
+	"SoundManager.h"
 	<iostream>
 	<SDL.h>
 	<SDL_image.h>
@@ -89,13 +92,13 @@
 1743272732 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\textrender.cpp
 	"textrender.h"
 
-1743272732 c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\textrender.h
+1744206912 c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\textrender.h
 	<SDL.h>
 	<SDL_ttf.h>
 	<string>
 	<iostream>
 
-1743272732 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\soundmanager.cpp
+1744206912 source:c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\soundmanager.cpp
 	"SoundManager.h"
 
 1743272732 c:\users\dinh gia phuc\onedrive - vnu.edu.vn\documents\github\game\game\soundmanager.h

@@ -15,6 +15,34 @@
 #define pii pair<int,ii>
 using namespace std;
 
+void Background::print_Lose(SDL_Renderer* render) {
+    SDL_Rect dst;
+    dst.w = window_width;
+    dst.h = window_height;
+    dst.x = 0;
+    dst.y = 0;
+    SDL_Texture* texture = getTileTexture(49494949,render);
+    SDL_RenderCopy(render,texture,NULL,&dst);
+}
+void Background::huong_dan(SDL_Renderer* render) {
+    SDL_Rect dst;
+    dst.w = window_width;
+    dst.h = window_height;
+    dst.x = 0;
+    dst.y = 0;
+    SDL_Texture* texture = getTileTexture(11111111,render);
+    SDL_RenderCopy(render,texture,NULL,&dst);
+}
+
+void Background::print_Win(SDL_Renderer* render) {
+    SDL_Rect dst;
+    dst.w = window_width;
+    dst.h = window_height;
+    dst.x = 0;
+    dst.y = 0;
+    SDL_Texture* texture = getTileTexture(53535353,render);
+    SDL_RenderCopy(render,texture,NULL,&dst);
+}
 void Background::print_UI(SDL_Renderer* render) {
     SDL_Rect dst;
     dst.w = 3 * size_texture;
@@ -79,26 +107,26 @@ void Background::typemap(int id) {
             matrix[i][j].push_back(0);
         }
     }
-    ++cnt;
-    for(int i = stx ; i < endx ; i ++) {
-        sizemap[i][sty].push_back(id * 20 + cnt);
-    }
-    ++cnt;
-    for(int i = stx ; i < endx ; i ++) {
-        sizemap[i][endy - 1].push_back(id * 20 + cnt);
-    }
-    ++cnt;
-    for(int i = sty ; i < endy ; i ++) {
-        sizemap[stx][i].push_back(id * 20 + cnt);
-    }
-    ++cnt;
-    for(int i = sty ; i < endy ; i ++) {
-        sizemap[endx - 1][i].push_back(id * 20 + cnt);
-    }
-    sizemap[stx][sty].push_back(id * 20 + (++cnt));
-    sizemap[endx - 1][sty].push_back(id * 20 + (++cnt));
-    sizemap[stx][endy - 1].push_back(id * 20 + (++cnt));
-    sizemap[endx - 1][endy - 1].push_back(id * 20 + (++cnt));
+//    ++cnt;
+//    for(int i = stx ; i < endx ; i ++) {
+//        sizemap[i][sty].push_back(id * 20 + cnt);
+//    }
+//    ++cnt;
+//    for(int i = stx ; i < endx ; i ++) {
+//        sizemap[i][endy - 1].push_back(id * 20 + cnt);
+//    }
+//    ++cnt;
+//    for(int i = sty ; i < endy ; i ++) {
+//        sizemap[stx][i].push_back(id * 20 + cnt);
+//    }
+//    ++cnt;
+//    for(int i = sty ; i < endy ; i ++) {
+//        sizemap[endx - 1][i].push_back(id * 20 + cnt);
+//    }
+//    sizemap[stx][sty].push_back(id * 20 + (++cnt));
+//    sizemap[endx - 1][sty].push_back(id * 20 + (++cnt));
+//    sizemap[stx][endy - 1].push_back(id * 20 + (++cnt));
+//    sizemap[endx - 1][endy - 1].push_back(id * 20 + (++cnt));
 }
 void Background::loadMap(const char* path) {
     ifstream file(path);
@@ -125,13 +153,6 @@ void Background::loadMap(const char* path) {
         ++row;
     }
     file.close();
-
-    for(int j = sty ; j < endy ; j ++) {
-        for(int i = stx ; i < endx ; i ++) {
-            cout << matrix[i][j].back() <<" ";
-        }
-        cout << endl;
-    }
 }
 SDL_Texture* Background::Loadtexture(const char* path,SDL_Renderer* render) {
     SDL_Texture* texture = IMG_LoadTexture(render,path);

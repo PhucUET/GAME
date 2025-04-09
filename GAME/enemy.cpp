@@ -11,6 +11,7 @@ const int frame_height = 64;
 const int frame_width = 64;
 const int Frame_delay = 100;
 
+
 Enemy::Enemy(int sx,int sy) {
     dstRect.x = sx;
     dstRect.y = sy;
@@ -33,7 +34,6 @@ SDL_Texture* Enemy::LoadTexture(const char* path, int& spriteSheetWidth, int& sp
 }
 
 void Enemy::render_Player(SDL_Renderer* render) {
-    up_cnt_bom();
     up_cnt_bom();
     idleTexture = LoadTexture(idle_namefile,idleWidth,idleHeight,render);
     runTexture = LoadTexture(run_namefile,runWidth,runHeight,render);
@@ -66,7 +66,7 @@ void Enemy::render_update(SDL_Renderer* render) {
 }
 
 
-void Enemy::skill(Background& bg,SDL_Renderer* render) {
+void Enemy::skill(Background& bg,SDL_Renderer* render,SoundManager& sound) {
     int sx = dstRect.x + 16;
     int sy = dstRect.y + 16;
 //    if(point == 0)weaponss[0].change_Gun();
@@ -89,8 +89,9 @@ void Enemy::skill(Background& bg,SDL_Renderer* render) {
         if(weapons.Gun())  {
             SDL_Texture* texture = nullptr;
             int direct = currentAnimation;
+            sound.playSoundEffect("laser",0);
             if(direct == 0 || direct == 3)texture = bg.getTileTexture(88888,render);
-            else texture = bg.getTileTexture(888888,render),direct = 3 - direct;
+            else texture = bg.getTileTexture(888888,render),direct = direct;
             while(!bg.wall_check(sx = sx + dx[direct],sy = sy + dy[direct])) {
                 bg.rendertexture(texture,sx,sy,render);
                 bg.up_death(sx,sy);
@@ -138,7 +139,7 @@ void Enemy::nextMove(SDL_Renderer* render,Background& bg) {
         }
     }
 }
-void Enemy::Up_All(SDL_Renderer* render, Background& bg,float deltaTime) {
+void Enemy::Up_All(SDL_Renderer* render, Background& bg,float deltaTime,SoundManager& sound) {
     for(auto &weapons : weaponss) {
 //            cout<< weapons.check_bom() <<" " <<"da dat bom ver2 \n";
 //            cout << weapons.check_bom() <<" "<<weaponss.size() <<" " <<"dat duoc bom roi\n";
@@ -149,6 +150,7 @@ void Enemy::Up_All(SDL_Renderer* render, Background& bg,float deltaTime) {
                     int u = pos.first;
                     int v = pos.second;
                     SDL_Texture* texture = nullptr;
+                    sound.playSoundEffect("bom",0);
                     bg.up_death(u,v);
                     bg.block_tile(u,v,0);
                     texture = bg.getTileTexture(99999,render);
@@ -180,11 +182,10 @@ void Enemy::Up_All(SDL_Renderer* render, Background& bg,float deltaTime) {
         }
     }
 
-
     if(bg.check_tile(dstRect.x,dstRect.y)) {
         int c = random_direction();
         if(c == 2 || bg.check_character(dstRect.x + 16,dstRect.y + 16)) {
-           skill(bg,render);
+           skill(bg,render,sound);
         }
     }
 //    nextMove(render,bg);

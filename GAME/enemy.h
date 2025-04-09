@@ -2,6 +2,7 @@
 #define ENEMY.H
 
 #include "weapon.h"
+#include "SoundManager.h"
 #include <iostream>
 #include <SDL.h>
 #include <SDL_image.h>
@@ -33,6 +34,18 @@ private:
     int dy[4] = {32,0,0,-32};
 
 public:
+    void reset(int x,int y) {
+        health = 0;
+        point = 0;
+        weaponss.clear();
+        dstRect.x = x;
+        dstRect.y = y;
+    }
+    void del_all() {
+        SDL_DestroyTexture(idleTexture);
+        SDL_DestroyTexture(runTexture);
+        SDL_DestroyTexture(currentTexture);
+    }
     Enemy(int sx,int sy);
     int Power_bom() {
         return weaponss[0].Power_Bom();
@@ -68,8 +81,8 @@ public:
     void is_renderer(SDL_Renderer* renderer);
     void render_Player(SDL_Renderer* render);
     void render_update(SDL_Renderer* render);
-    void Up_All(SDL_Renderer* render,Background& bg,float deltaTime);
-    void skill(Background& bg,SDL_Renderer* render);
+    void Up_All(SDL_Renderer* render,Background& bg,float deltaTime,SoundManager& sound);
+    void skill(Background& bg,SDL_Renderer* render,SoundManager& sound);
     void nextMove(SDL_Renderer* render,Background& bg);
     int alive() {
         return health;

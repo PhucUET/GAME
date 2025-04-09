@@ -44,7 +44,7 @@ void Player::render_Player(SDL_Renderer* render) {
     framecountIdle = idleWidth / frame_width;
     framecountRun  = runWidth / frame_width;
 }
-void Player::update(Background& bg,SDL_Renderer* render) {
+void Player::update(Background& bg,SDL_Renderer* render,SoundManager& sound) {
      moving = false; // Mặc định là không di chuyển
     double newX = dstRect.x;
     double newY = dstRect.y;
@@ -66,10 +66,8 @@ void Player::update(Background& bg,SDL_Renderer* render) {
         moving = true;
     }
     if (key_space) {
-            cout <<"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n";
-            skill(bg,render);
+            skill(bg,render,sound);
     }
-
     if (moving) {
         if (!isrunning) {
             frame_count = 0;
@@ -92,7 +90,7 @@ void Player::update(Background& bg,SDL_Renderer* render) {
     }
 }
 
-void Player::handleInput() {
+void Player::handleInput(bool &stop) {
    SDL_Event e;
     while(SDL_PollEvent(&e) != 0) {
         if(e.type == SDL_KEYDOWN) {
@@ -112,6 +110,8 @@ void Player::handleInput() {
             case SDLK_SPACE:
                 key_space = true;
                 break;
+            case SDLK_ESCAPE:
+                key_esc = true;
             }
         } else if(e.type == SDL_KEYUP) {
             switch (e.key.keysym.sym) {
@@ -133,6 +133,11 @@ void Player::handleInput() {
             }
         }
     }
+    if(key_esc) {
+        if(!stop) stop = true;
+        else stop = false;
+        key_esc = false;
+    }
 }
 const int FRAME_DELAY = 70;
 void Player::render_update(SDL_Renderer* render) {
@@ -153,13 +158,14 @@ void Player::render_update(SDL_Renderer* render) {
 //        SDL_RenderPresent(renderer_player);
 }
 
-void Player::Up_All(SDL_Renderer* render, Background& bg,float deltaTime) {
+void Player::Up_All(SDL_Renderer* render, Background& bg,float deltaTime,SoundManager& sound) {
     for(auto &weapons : weaponss) {
 //            cout<< weapons.check_bom() <<" " <<"da dat bom ver2 \n";
 //            cout << weapons.check_bom() <<" "<<weaponss.size() <<" " <<"dat duoc bom roi\n";
             if(weapons.check_bom()) {
                 weapons.update(deltaTime,render);
                 if(!weapons.check_bom()) {
+                    sound.playSoundEffect("bom",0);
                     pair<int,int> pos = weapons.pos_bom();
                     int u = pos.first;
                     int v = pos.second;
@@ -194,11 +200,11 @@ void Player::Up_All(SDL_Renderer* render, Background& bg,float deltaTime) {
             }
         }
     }
-    update(bg,render);
+    update(bg,render,sound);
     render_update(render);
 }
 
-void Player::skill(Background& bg,SDL_Renderer* render) {
+void Player::skill(Background& bg,SDL_Renderer* render,SoundManager& sound) {
     int sx = dstRect.x + 16;
     int sy = dstRect.y + 16;
 //    if(point == 0)weaponss[0].change_Gun();
@@ -207,7 +213,6 @@ void Player::skill(Background& bg,SDL_Renderer* render) {
     int cnt = 0;
     for(auto &weapons: weaponss) {
         if(weapons.Bom()) {
-            cout << ++cnt <<"\n";
             if(weapons.check_bom()) continue;
             bg.block_tile(sx,sy,1);
             for(int i = 0 ; i < 4 ; i ++) {
@@ -224,6 +229,7 @@ void Player::skill(Background& bg,SDL_Renderer* render) {
             int direct = currentAnimation;
             if(direct == 0 || direct == 3)texture = bg.getTileTexture(88888,render);
             else texture = bg.getTileTexture(888888,render),direct = 3 - direct;
+            sound.playSoundEffect("laser",0);
             while(!bg.wall_check(sx = sx + dx[direct],sy = sy + dy[direct])) {
                 bg.rendertexture(texture,sx,sy,render);
                 bg.up_death(sx,sy);

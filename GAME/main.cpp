@@ -1,6 +1,7 @@
 #include <iostream>
 #include "background.h"
 #include "player.h"
+#include "SoundManager.h"
 #include "textrender.h"
 #include "enemy.h"
 #include <SDL.h>
@@ -22,7 +23,7 @@ bool key_1 = false;
 bool key_2 = false;
 bool key_3 = false;
 bool key_esc = false;
-
+bool stop = false;
 int stt_map = 0;
 int enemy_count = 0;
 
@@ -67,26 +68,35 @@ void quitSDL() {
     TTF_Quit();
 }
 Player P1(4 * 32 - 16,16);
-
+SoundManager soundBackground;
 Enemy E1(window_width - 16 - 64, 16);
 Enemy E2(4 * 32 - 16, window_height - 16 - 64);
 Enemy E3(window_width - 16 - 64, window_height - 16 - 64);
 Uint32 lastTime = SDL_GetTicks();
 Uint32 currentTime;
 float deltaTime = 0.0f;
+void reset() {
+    P1.reset(4 * 32 - 16,16);
+    E1.reset(window_width - 16 - 64, 16);
+    E2.reset(4 * 32 - 16, window_height - 16 - 64);
+    E3.reset(window_width - 16 - 64, window_height - 16 - 64);
+    stt_map = 0;
+    enemy_count = 0;
+    background.reset();
+}
 void up_P1() {
-    P1.Up_All(renderer,background,deltaTime);
+    P1.Up_All(renderer,background,deltaTime,soundBackground);
     pair<int,int> pos_P1 = P1.location();
     background.update_character(pos_P1.first,pos_P1.second,1);
 }
 void up_E1() {
-    E1.Up_All(renderer,background,deltaTime);
+    E1.Up_All(renderer,background,deltaTime,soundBackground);
 }
 void up_E2() {
-    E2.Up_All(renderer,background,deltaTime);
+    E2.Up_All(renderer,background,deltaTime,soundBackground);
 }
 void up_E3() {
-    E3.Up_All(renderer,background,deltaTime);
+    E3.Up_All(renderer,background,deltaTime,soundBackground);
 }
 int cnt_enemy = 0;
 void update_pos() {
@@ -200,12 +210,15 @@ void up_death() {
         }
         if(background.is_death(pos_E1.first,pos_E1.second) && E1.alive()) {
             E1.down_alive();
+            soundBackground.playSoundEffect("die",0);
         }
         if(background.is_death(pos_E2.first,pos_E2.second) && E2.alive()) {
             E2.down_alive();
+            soundBackground.playSoundEffect("die",0);
         }
         if(background.is_death(pos_E3.first,pos_E3.second) && E3.alive()) {
             E3.down_alive();
+            soundBackground.playSoundEffect("die",0);
         }
 }
 void Gameloop() {
@@ -214,7 +227,8 @@ void Gameloop() {
         currentTime = SDL_GetTicks();
         deltaTime = (currentTime - lastTime) / 1000.0f;
         lastTime = currentTime;
-        P1.handleInput();
+        P1.handleInput(stop);
+        if(stop) return;
         update_pos();
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
@@ -239,7 +253,6 @@ void listen_Input() {
     SDL_Event e;
     while(SDL_PollEvent(&e) != 0) {
         if(e.type == SDL_KEYDOWN) {
-            cout <<"ngu\n";
             switch (e.key.keysym.sym) {
             case SDLK_1:
                 key_1 = true;
@@ -278,6 +291,8 @@ void listen_Input() {
         }
     }
 }
+bool isLose = false;
+bool isWin = false;
 
 int main(int argc, char* argv[])
 {
@@ -285,20 +300,32 @@ int main(int argc, char* argv[])
     TextRenderer* textrender = new TextRenderer(14);
     int run = 0;
     int cnt = 0;
-    const float GAME_DURATION_SECONDS = 80.0f; // Ví dụ: 3 phút
+    const float GAME_DURATION_SECONDS = 120.0f; // Ví dụ: 3 phút
     Uint32 startTime = SDL_GetTicks(); // Thời điểm bắt đầu trò chơi
     float remainingTime = GAME_DURATION_SECONDS; // Thời gian còn lại ban đầu
     bool timeIsUp = false;
 
     bool game_start = true;
+
+    soundBackground.loadSoundEffect(string("background"),"background.wav");
+    soundBackground.loadSoundEffect(string("laser"),"laser.wav");
+    soundBackground.loadSoundEffect(string("bom"),"Bom.wav");
+    soundBackground.loadSoundEffect(string("lose"),"lose.wav");
+    soundBackground.loadSoundEffect(string("win"),"win.wav");
+    soundBackground.loadSoundEffect(string("die"),"die.wav");
+    soundBackground.playSoundEffect("background",-1);
     while(!run) {
-        if(cnt < 4)SDL_RenderClear(renderer), listen_Input();
-        SDL_Delay(10);
+        if(cnt != 5)SDL_RenderClear(renderer), listen_Input();
+        SDL_Delay(20);
         if(cnt == 0) {
-            background.print_nen(renderer);
-            if(key_space) cnt ++;
+            background.huong_dan(renderer);
+            if(key_space) cnt ++,key_space = false;
         }
         if(cnt == 1) {
+            background.print_nen(renderer);
+            if(key_space) cnt ++,key_space = false;
+        }
+        if(cnt == 2) {
             background.print_choosen_map(renderer);
             if(key_1) stt_map = 1;
             if(key_2) stt_map = 2;
@@ -307,7 +334,7 @@ int main(int argc, char* argv[])
             if(key_1 + key_2 + key_3 > 0) cnt ++;
             key_1 = key_2 = key_3 = false;
         }
-        if(cnt == 2) {
+        if(cnt == 3) {
             background.print_choosen_enemy(renderer);
             if(key_1 + key_2 + key_3 > 0) cnt ++;
             if(key_esc) cnt --;
@@ -326,38 +353,54 @@ int main(int argc, char* argv[])
             key_1 = key_2 = key_3 = false;
 
         }
-        if(cnt == 3) {
+        if(cnt == 4) {
             background.print_choosen_level(renderer);
             if(key_1 + key_2 + key_3 > 0) cnt ++;
-            key_1 = key_2 = key_3 = false;
+            if(key_2) {
+                if(enemy_count >= 1) {
+                E1.up_alive();
+                }
+                if(enemy_count >= 2) {
+                    E2.up_alive();
+                }
+                if(enemy_count >= 3) {
+                    E3.up_alive();
+                }
+            }
+            if(key_3) {
+                if(enemy_count >= 1) {
+                    E1.up_alive();
+                    E1.update_power();
+                }
+                if(enemy_count >= 2) {
+                    E2.up_alive();
+                    E2.update_power();
+                }
+                if(enemy_count >= 3) {
+                    E3.up_alive();
+                    E3.update_power();
+                }
+            }
             if(key_esc) cnt --;
             key_1 = key_2 = key_3 = false;
         }
-        if(cnt == 4) {
-            if(!P1.alive()) {
-                background.print_UI(renderer);
-                continue;
-            }
-
+        if(cnt == 5) {
             if(game_start) {
                 startTime = SDL_GetTicks();
                 game_start = false;
                 background.typemap(stt_map - 1);
                 string type_map = to_string(stt_map) + ".csv";
-                background.loadMap("1.csv");
+                background.loadMap(type_map.c_str());
                 P1.render_Player(renderer);
                 E1.render_Player(renderer);
                 E2.render_Player(renderer);
                 E3.render_Player(renderer);
-                E1.change_Gun();
             }
-            cnt_enemy = 0;
+                cnt_enemy = 0;
                 SDL_Color white = {255, 255, 255, 255};
                 SDL_Color black = {0, 0, 0, 255};
-//            cout <<"ngusi dan don \n";
-
             Gameloop();
-
+            if(stop) continue;
             string health_P1 = to_string(P1.alive());
             textrender->renderText(renderer,health_P1,black,72,22);
             string count_bom_P1 =  to_string(P1.Get_count_bom());
@@ -396,8 +439,10 @@ int main(int argc, char* argv[])
             textrender->renderText(renderer,point_E3,black,18,427);
 
             if(cnt_enemy == 0) {
-                cout <<"you win\n";
-                break;
+                isWin = true;
+                soundBackground.playSoundEffect("win",0);
+                cnt ++;
+                continue;
             }
             if (!timeIsUp) {
                 Uint32 currentTime = SDL_GetTicks();
@@ -419,12 +464,48 @@ int main(int argc, char* argv[])
             }
             textrender->renderText(renderer,formattedTime,timeColor,18,450);
             SDL_RenderPresent(renderer);
+            if(timeIsUp) {
+                timeIsUp = false;
+                cnt++;
+                if(P1.Get_point() < max(max(E1.Get_point(),E2.Get_point()),E3.Get_point())) isLose = true,soundBackground.playSoundEffect("lose",0);
+                else isWin = true,soundBackground.playSoundEffect("win",0);
+                continue;
+            }
+            if(!P1.alive()) {
+                soundBackground.playSoundEffect("die",0);
+                cnt ++;
+                soundBackground.playSoundEffect("lose",0);
+                isLose = true;
+                continue;
+            }
         }
-        if(cnt < 4) {
+        if(cnt == 6) {
+            if(isLose == true) {
+                background.print_Lose(renderer);
+            }
+            if(isWin == true) {
+                background.print_Win(renderer);
+            }
+            if(key_space == true) {
+                cnt = 1,key_space = false;
+                isLose = isWin = false;
+                remainingTime = GAME_DURATION_SECONDS;
+                game_start = true;
+                reset();
+            }
+            else if(key_esc == true) {
+                key_esc = false;break;
+            }
+        }
+        if(cnt != 5) {
             SDL_Delay(100);
             SDL_RenderPresent(renderer);
         }
     }
+    soundBackground.~SoundManager();
+    background.del_all();
+    P1.del_all();
+    E1.del_all();
     quitSDL();
     return 0;
 }

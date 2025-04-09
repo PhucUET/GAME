@@ -1,6 +1,5 @@
 #include<iostream>
 #include "weapon.h"
-
 using namespace std;
 
 SDL_Texture* Weapon::loadTexture(const char* path, int& spriteSheetWidth, int& spriteSheetHeight,SDL_Renderer* render) {

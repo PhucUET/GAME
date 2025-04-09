@@ -6,7 +6,7 @@
 #include <string>
 #include <utility>
 #include "background.h"
-
+#include "SoundManager.h"
 using namespace std;
 class Weapon{
 private:

@@ -4,7 +4,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <string>
-#include <iostream> // Để in lỗi
+#include <iostream>
 
 class TextRenderer {
 public:
