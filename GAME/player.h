@@ -36,8 +36,8 @@ private:
     int cnt_bom = 1;
     vector<Weapon> weaponss;
 
-    int dx[4] = {0,32,-32,0};
-    int dy[4] = {32,0,0,-32};
+    int dx[4] = {0,0,-32,32};
+    int dy[4] = {32,-32,0,0};
 
 public:
     void del_all() {

@@ -4,26 +4,30 @@
 #include <thread>
 #include <random>
 #include <chrono>
+#include <string>
 #include "weapon.h"
-#define idle_namefile "Sword_Idle_full.png"
-#define run_namefile "Sword_Walk_full.png"
 const int frame_height = 64;
 const int frame_width = 64;
 const int Frame_delay = 100;
 
 
-Enemy::Enemy(int sx,int sy) {
+Enemy::Enemy(int sx,int sy,int stt) {
     dstRect.x = sx;
     dstRect.y = sy;
     dstRect.w = frame_width;
     dstRect.h = frame_height;
+    cnt = stt;
+    cout<< sx <<" "<<sy <<" " << cnt <<" "<<stt <<"\n";
+//    idle_namefile = filename_idle[stt];
+//    run_namefile = filename_walk[stt];
+//    std::cout << idle_namefile <<"\n";
 }
 
 SDL_Texture* Enemy::LoadTexture(const char* path, int& spriteSheetWidth, int& spriteSheetHeight,SDL_Renderer* render) {
     SDL_Texture* newTexture = nullptr;
     SDL_Surface* loadedSurface = IMG_Load(path);
     if (!loadedSurface) {
-        std::cerr << "Không thể load ảnh! " << IMG_GetError() << std::endl;
+        std::cerr << "Khong the load anh! " << IMG_GetError() <<" " << path << std::endl;
         return nullptr;
     }
     newTexture = SDL_CreateTextureFromSurface(render, loadedSurface);
@@ -35,8 +39,9 @@ SDL_Texture* Enemy::LoadTexture(const char* path, int& spriteSheetWidth, int& sp
 
 void Enemy::render_Player(SDL_Renderer* render) {
     up_cnt_bom();
-    idleTexture = LoadTexture(idle_namefile,idleWidth,idleHeight,render);
-    runTexture = LoadTexture(run_namefile,runWidth,runHeight,render);
+    idleTexture = LoadTexture(filename_idle[cnt],idleWidth,idleHeight,render);
+    runTexture = LoadTexture(filename_walk[cnt],runWidth,runHeight,render);
+    cout << cnt <<"\n";
     if (!idleTexture || !runTexture) return;
     animationIdle_count = idleHeight / frame_height;
     animationRun_count  = runHeight / frame_height;

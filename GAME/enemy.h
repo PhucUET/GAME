@@ -5,6 +5,7 @@
 #include "SoundManager.h"
 #include <iostream>
 #include <SDL.h>
+#include <string>
 #include <SDL_image.h>
 #include "background.h"
 #include <utility>
@@ -21,6 +22,7 @@ private:
     int health = 0;
     int point = 0;
     int times = 0;
+    int cnt = 0;
 
 
     vector<Weapon> weaponss;
@@ -30,8 +32,12 @@ private:
     Uint32 lastTime = SDL_GetTicks();
     Uint32 RunTime = SDL_GetTicks();
 
-    int dx[4] = {0,-32,32,0};
-    int dy[4] = {32,0,0,-32};
+    int dx[4] = {0,0,-32,32};
+    int dy[4] = {32,-32,0,0};
+
+    const char* filename_idle[5] = {"Vampires2_Idle_full.png","Vampires3_Idle_full.png","Vampires2_Idle_full.png"};
+    const char* filename_walk[5] = {"Vampires2_Walk_full.png","Vampires3_Walk_full.png","Vampires2_Walk_full.png"};
+
 
 public:
     void reset(int x,int y) {
@@ -46,7 +52,7 @@ public:
         SDL_DestroyTexture(runTexture);
         SDL_DestroyTexture(currentTexture);
     }
-    Enemy(int sx,int sy);
+    Enemy(int sx,int sy,int stt);
     int Power_bom() {
         return weaponss[0].Power_Bom();
     }

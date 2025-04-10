@@ -3,8 +3,8 @@
 #include <SDL_image.h>
 #include <thread>
 #include "weapon.h"
-#define idle_namefile "Sword_Idle_full.png"
-#define run_namefile "Sword_Walk_full.png"
+#define idle_namefile "Vampires1_Idle_full.png"
+#define run_namefile "Vampires1_Walk_full.png"
 
 using namespace std;
 const int frame_height = 64;
@@ -50,7 +50,7 @@ void Player::update(Background& bg,SDL_Renderer* render,SoundManager& sound) {
     double newY = dstRect.y;
     if (key_w) {
         newY -= speed;
-        currentAnimation = 3;
+        currentAnimation = 1;
         moving = true;
     } else if (key_s) { // Sử dụng else if
         newY += speed;
@@ -58,11 +58,11 @@ void Player::update(Background& bg,SDL_Renderer* render,SoundManager& sound) {
         moving = true;
     } else if (key_d) {
         newX += speed;
-        currentAnimation = 2;
+        currentAnimation = 3;
         moving = true;
     } else if (key_a) {
         newX -= speed;
-        currentAnimation = 1;
+        currentAnimation = 2;
         moving = true;
     }
     if (key_space) {
@@ -227,8 +227,8 @@ void Player::skill(Background& bg,SDL_Renderer* render,SoundManager& sound) {
         if(weapons.Gun())  {
             SDL_Texture* texture = nullptr;
             int direct = currentAnimation;
-            if(direct == 0 || direct == 3)texture = bg.getTileTexture(88888,render);
-            else texture = bg.getTileTexture(888888,render),direct = 3 - direct;
+            if(direct == 0 || direct == 1)texture = bg.getTileTexture(88888,render);
+            else texture = bg.getTileTexture(888888,render),direct = direct;
             sound.playSoundEffect("laser",0);
             while(!bg.wall_check(sx = sx + dx[direct],sy = sy + dy[direct])) {
                 bg.rendertexture(texture,sx,sy,render);

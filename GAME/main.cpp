@@ -69,9 +69,9 @@ void quitSDL() {
 }
 Player P1(4 * 32 - 16,16);
 SoundManager soundBackground;
-Enemy E1(window_width - 16 - 64, 16);
-Enemy E2(4 * 32 - 16, window_height - 16 - 64);
-Enemy E3(window_width - 16 - 64, window_height - 16 - 64);
+Enemy E1(window_width - 16 - 64, 16,0);
+Enemy E2(4 * 32 - 16, window_height - 16 - 64,1);
+Enemy E3(window_width - 16 - 64, window_height - 16 - 64,2);
 Uint32 lastTime = SDL_GetTicks();
 Uint32 currentTime;
 float deltaTime = 0.0f;
